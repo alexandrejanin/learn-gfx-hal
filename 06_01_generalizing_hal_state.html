@@ -1,0 +1,531 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Generalizing HalState - learn-gfx-hal</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="01_introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><a href="02_opening_a_window.html"><strong aria-hidden="true">2.</strong> Opening A Window</a></li><li><a href="03_clear_the_window.html"><strong aria-hidden="true">3.</strong> Clear The Window</a></li><li><a href="04_triangle_intro.html"><strong aria-hidden="true">4.</strong> Triangle Intro</a></li><li><a href="05_shaders.html"><strong aria-hidden="true">5.</strong> Shaders</a></li><li><a href="06_textures.html"><strong aria-hidden="true">6.</strong> Textures</a></li><li><ol class="section"><li><a href="06_01_generalizing_hal_state.html" class="active"><strong aria-hidden="true">6.1.</strong> Generalizing HalState</a></li></ol></li><li><a href="07_coordinates.html"><strong aria-hidden="true">7.</strong> Coordinates</a></li><li><a href="08_camera.html"><strong aria-hidden="true">8.</strong> Camera</a></li><li><a href="09_depth_buffer.html"><strong aria-hidden="true">9.</strong> Depth Buffer</a></li><li><a href="10_instanced_drawing.html"><strong aria-hidden="true">10.</strong> Instanced Drawing</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">learn-gfx-hal</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="#generalizing-halstate" id="generalizing-halstate"><h1>Generalizing HalState</h1></a>
+<a class="header" href="#initial-attempt" id="initial-attempt"><h2>Initial Attempt</h2></a>
+<p>So the first thing to do when generalizing code to multiple types is to identify
+what we are trying to generalize. For us, that's the backend. If you've been
+following the tutorial, it's been all the classes under <code>back::</code>. Now that we
+know what to abstract, we can go ahead and start adding in generics/type parameters.</p>
+<p>We should take a good look at our <code>HalState</code> struct first, so here it is:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub struct HalState {
+  current_frame: usize,
+  frames_in_flight: usize,
+  in_flight_fences: Vec&lt;&lt;back::Backend as Backend&gt;::Fence&gt;,
+  render_finished_semaphores: Vec&lt;&lt;back::Backend as Backend&gt;::Semaphore&gt;,
+  image_available_semaphores: Vec&lt;&lt;back::Backend as Backend&gt;::Semaphore&gt;,
+  command_buffers: Vec&lt;CommandBuffer&lt;back::Backend, Graphics, MultiShot, Primary&gt;&gt;,
+  command_pool: ManuallyDrop&lt;CommandPool&lt;back::Backend, Graphics&gt;&gt;,
+  framebuffers: Vec&lt;&lt;back::Backend as Backend&gt;::Framebuffer&gt;,
+  image_views: Vec&lt;(&lt;back::Backend as Backend&gt;::ImageView)&gt;,
+  render_pass: ManuallyDrop&lt;&lt;back::Backend as Backend&gt;::RenderPass&gt;,
+  render_area: Rect,
+  queue_group: ManuallyDrop&lt;QueueGroup&lt;back::Backend, Graphics&gt;&gt;,
+  swapchain: ManuallyDrop&lt;&lt;back::Backend as Backend&gt;::Swapchain&gt;,
+  device: ManuallyDrop&lt;back::Device&gt;,
+  _adapter: Adapter&lt;back::Backend&gt;,
+  _surface: &lt;back::Backend as Backend&gt;::Surface,
+  _instance: ManuallyDrop&lt;back::Instance&gt;,
+}
+#}</code></pre></pre>
+<p>Almost everything has a <code>back::</code> in it! And the most common, by far, is
+<code>back::Backend</code>, so our next step is to abstract it. If we look through the type
+declaration in <code>gfx-hal</code>'s backend crates, we'll see that this type implements a
+trait called <code>Backend</code> and is used as such in our code. So then, we can force our
+type parameter to have this trait by adding a type parameter with a trait bound.
+This means the type parameter must implement the trait <code>Backend</code>, which seems to
+be the requirement for our use case. So then, the type signature of HalState is:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+struct HalState&lt;B: Backend&gt; { /* the fields, which will be generalized to B */ }
+#}</code></pre></pre>
+<p>Well, you still need to declare the concrete type (a version of this type with
+all the types concrete instead of abstract), so we will now need to declare our
+struct:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+struct OtherPlace {
+  hal_state: HalState&lt;back::Backend&gt;
+}
+#}</code></pre></pre>
+<p>Notice that we can't get away from <code>back::Backend</code> completely -- and there's no
+reason to. We can't stay in the abstract forever. However, this does let us
+implement the <code>HalState</code> without worrying about the underlying system. This
+tends to be good, so now let's move on and take a peek how to generalize the
+fields.</p>
+<p>We've added the type parameter, but we haven't abstracted the types yet! So now
+let's go ahead and do that. The type we've added in is meant to replace
+<code>back::Backend</code>.</p>
+<p>If we look at the struct definition, the first in the list with <code>back::Backend</code>
+is <code>in_flight_fences</code>:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  in_flight_fences: Vec&lt;&lt;B as Backend&gt;::Fence&gt;,
+#}</code></pre></pre>
+<p>Simple enough, right? Well, now we need to change every time we wrote
+<code>back::Backend</code>. The more astute might notice that this results in <code>B as Backend</code> in many places, but we'll leave that alone for now. As it turns out,
+it will be useful when we restructure things a little more later.</p>
+<p>Ok, so we've replaced all the instances of <code>back::Backend</code>. But we still have
+several cases where we're relying on the <code>back::</code> part! Here's a snippet showing
+those cases:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub struct HalState&lt;B: Backend&gt; {
+  // Lotsa fields here
+  device: ManuallyDrop&lt;back::Device&gt;,
+  // A few more fields
+  _instance: ManuallyDrop&lt;back::Instance&gt;,
+}
+#}</code></pre></pre>
+<p>We have two other fields! So how are we going to generalize these as well?
+Remember that we're going to get rid of anything that has <code>back::</code> in it!</p>
+<p>Well, we could replace these as well, the same way we did earlier. If we
+look at <code>back::Device</code> and <code>back::Instance</code>, we can see that they have
+the traits <code>Device</code> and <code>Instance</code>. So then, let's try that (relatively
+blindly, as it will turn out):</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub struct HalState&lt;B: Backend, D: Device, I: Instance&gt; {
+  /* Lotsa fields here */
+  device: ManuallyDrop&lt;D&gt;,
+  /* A few more fields */
+  _instance: ManuallyDrop&lt;I&gt;,
+}
+#}</code></pre></pre>
+<p>Well, now the compiler's complaining that <code>Device</code> is missing a type parameter.
+Well, if we look at Device's trait's declaration, it looks like:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub trait Device&lt;B: Backend&gt;: Any + Send + Sync { /* things are here */ }
+#}</code></pre></pre>
+<p>Looks like device is missing a <code>Backend</code> type parameter! Let's tack that on to
+the <code>Device</code> trait bound for type parameter <code>D</code>. Now it looks like:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub struct HalState&lt;B: Backend, D: Device&lt;B&gt;, I: Instance&gt; { /* fields! */ }
+#}</code></pre></pre>
+<p>Alright, so everything might be working now!</p>
+<p>And we can use it like this:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+struct OtherPlace {
+  hal_state: HalState&lt;back::Backend, back::Device, back::Instance&gt;
+}
+#}</code></pre></pre>
+<p>Hm, that's a bit of a mouthful, isn't it?</p>
+<p>Well, at least we have all the types in the struct sorted out now. Let's move on
+to the impl section:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+impl HalState {
+  fn new() {
+    /* lotsa things get initialized and constructed */
+  }
+}
+#}</code></pre></pre>
+<p>This doesn't compile at all, so let's listen to the compiler and add the needed
+types:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+impl &lt;B: Backend, D: Device, I: Instance&gt; HalState&lt;B, D, I&gt; { /* lotsa fns */ }
+#}</code></pre></pre>
+<p>But now it complains about out new function!</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  fn new(w: &amp;Window) {
+    let inst = I::create(&quot;HalState&quot;, 1);
+    /* lots more initializations */
+  }
+#}</code></pre></pre>
+<p>Well, turns out that create isn't part of the <code>Instance</code> trait, so we can't
+construct it directly. Well, how do we get one then? Turns out, we can just
+pass it in:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  fn new(w: &amp;Window, inst: I) { /* lots more initializations */ }
+#}</code></pre></pre>
+<p>Notice that we move I and not take a reference. This is because we want HalState
+to manage the instance. But if you try to <code>cargo check</code> again, it will tell you
+that <code>create_surface</code> isn't part of the <code>Instance</code> trait either. So we have to
+do the same thing and pass it in. But if we do that, it won't be mutable and we
+need to use <code>Surface</code> as mutable, so we need to declare this input to be mutable
+as well:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  fn new(w: &amp;Window, inst: I, mut surf: &lt;B&gt;::Surface) { /* lots more initializations */ }
+#}</code></pre></pre>
+<p>Once again, notice how we moved surface instead of taking a reference. So then,
+we can now call new like this:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+fn some_other_thing() {
+  /* lotsa things */
+  let w = createWindow();
+  let instance = back::Instance::create(&quot;HalState&quot;, 1);
+  let surface = instance.create_surface(&amp;w);
+  let hal_state = HalState::new(&amp;w, inst, surf);
+  /* lotsa more things */
+}
+#}</code></pre></pre>
+<p>Okay. It's gotta work NOW right? No, not at all. If you try to compile the code,
+the compiler ends up throwing up somewhere in the mess and spews out a list of
+errors a mile long. Somewhere in there, there will be errors that look something
+like this:</p>
+<pre><code>error[E0308]: try expression alternatives have incompatible types
+   --&gt; main.rs:some_line_number:some_character_number
+    |
+ln# |                 in_flight_fences.push(device.create_fence(true).map_err(|_| &quot;Could not create a fence!&quot;)?);
+    |                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected associated type, found struct `renderer::back::native::Fence`
+    |
+    = note: expected type `&lt;B as Backend&gt;::Fence`
+               found type `back::native::Fence`
+/* lots more errors */
+error[E0308]: mismatched types
+   --&gt;  main.rs:some_line_number:some_character_number
+    |
+ln# |             device: ManuallyDrop::new(device),
+    |                                       ^^^^^^ expected type parameter, found associated type
+    |
+    = note: expected type `D`
+               found type `&lt;&lt;I as Instance&gt;::Backend as Backend&gt;::Device`
+</code></pre>
+<p>So there's a mismatch of types where <code>device.create_fence</code> is returning
+<code>renderer::back::native::Fence</code>. But if that's the case, why was it working
+before we tried to generalize <code>Device</code>? Don't they have to be the same thing
+then? And why is <code>D: Device&lt;B&gt;</code> not the same as longer <code>WeirdLongThing::Device</code>?</p>
+<a class="header" href="#a-brief-discussion-of-traits-and-associated-types" id="a-brief-discussion-of-traits-and-associated-types"><h2>A Brief Discussion of Traits and Associated Types</h2></a>
+<p>So we need to take a bit of a sidetrack to figure this one out.</p>
+<p>One of the core concepts of Rust is traits. There are small, nicely packaged
+interfaces. Or, at least, they appear to be. Within the most basic traits, there
+is a list of function definitions that any struct (or blanket impls) need to
+implement. However, you can have what are called &quot;associative type&quot;s attached to
+these traits. Here's some sample <code>gfx-hal</code> code that showcases associated types:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub trait Instance: Any + Send + Sync {
+    type Backend: Backend;
+    fn enumerate_adapters(&amp;self) -&gt; Vec&lt;Adapter&lt;Self::Backend&gt;&gt;;
+}
+#}</code></pre></pre>
+<p>If you look at the second line, you'll notice the <code>type</code> keyword, which is
+usually used for type aliases. (If you don't know what type aliases are, I
+recommend that you go read up/use Rust a bit more before coming back to this.)
+Here, we can see that this type has no definition, and so can't be a type alias.
+Well, not yet. This is an associated type. The impl of the trait is
+responsible for defining this type alias as a type following the listed type
+bound <code>Backend</code>.</p>
+<a class="header" href="#continuing-the-generalization" id="continuing-the-generalization"><h2>Continuing the Generalization</h2></a>
+<p>Okay, so let's think a litte bit about the <code>device</code> variable in the <code>new</code>
+function. This comes from a long list of calls that start from <code>I</code>.</p>
+<p>Turns out that <code>I</code> has a specific implementation that looks something like
+<code>back::native::Instance</code> (well, for the Vulkan backend at least). So when we
+create a device from this, we end up with that long weird type. What's important
+to note is that the backend in <code>I</code> is not necessarily the same as the <code>B</code> we are
+using as a <code>Backend</code>! That's because of the associated type <code>Backend</code> in <code>I</code>.
+While this may have been confusing naming, it's now apparent what we need to do:
+we need to tell the compiler that associated type <code>Backend</code> from <code>I</code> is the same
+<code>Backend</code> that we are using.</p>
+<p>We can do this by using some interesting syntax:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+struct HalState&lt;B: Backend, D: Device&lt;B&gt;, I: Instance&lt;Backend = B&gt; {
+  /* Fields go here */
+}
+#}</code></pre></pre>
+<p>Okay, so now this is just getting unwieldy. It turns out that there is one more
+ambiguity, so we need to actually use:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+struct HalState&lt;B: Backend&lt;Device = D&gt;, D: Device&lt;B&gt;, I: Instance&lt;Backend = B&gt; {
+  /* Fields go here */
+}
+#}</code></pre></pre>
+<p>And then, we should have something that works. But that type is a bit ridiculous.
+Let's see if we can fix that as well.</p>
+<a class="header" href="#making-a-better-generalization" id="making-a-better-generalization"><h2>Making a Better Generalization</h2></a>
+<p>Now if you look carefully, you'll realize that all of this is actually defined by
+<code>I</code>! The type <code>B</code> is simply the associated type <code>I::Backend</code> and <code>D</code> is the
+associated type <code>I::Backend::Device</code>!</p>
+<p>Anyways, we can now replace the really, really long type with this:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+struct HalState&lt;I: Instance&gt; { /* Fields go here */ }
+#}</code></pre></pre>
+<p>Short and sweet, and so much cleaner.</p>
+<p>Well, that's great, but now it doesn't compile anymore! So we need to patch up
+two other sections of our code: the sections that use <code>B</code> or <code>D</code> now that we've
+removed those type parameters and the parts we declare these type parameters.</p>
+<p>The <code>B</code> (since we've left the <code>as Backend</code> parts from earlier) can be replaced
+with <code>I::Backend</code> and the <code>D</code>s from earlier can be replaced with <code>&lt;I::Backend as Backend&gt;::Device</code>. The impl of <code>HalState</code> becomes</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+impl &lt;I: Instance&gt; HalState&lt;I&gt; {
+  /* all the functions */
+}
+#}</code></pre></pre>
+<a class="header" href="#further-enhancements" id="further-enhancements"><h2>Further enhancements</h2></a>
+<p>As it turns out, I really dislike writing <code>I::Backend</code> as opposed to <code>B</code>. While
+I'm unaware of how to do this for the struct block, we will be able to, in some
+distant future as of writing this, use the <code>type</code> keyword to alias <code>I::Backend</code>
+to <code>B</code>. Alternatively, you can use the first method, but only on the impl blocks.
+The impl would then only match for <code>Instance&lt;Backend=B&gt;</code>, but this is a nonissue
+so far, from what I've seen.</p>
+<p>As a final touch, we can actually implement functions for <code>HalState</code>s with
+specific type parameters. Instead of an on-site use of:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+fn some_other_thing() {
+  /* lotsa things */
+  let w = createWindow();
+  let instance = back::Instance::create(&quot;HalState&quot;, 1);
+  let surface = instance.create_surface(&amp;w);
+  let hal_state = HalState::new(&amp;w, inst, surf);
+  /* lotsa more things */
+}
+#}</code></pre></pre>
+<p>we can:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+impl HalState&lt;back::Instance&gt; {
+    fn create(&amp;w: Window) {
+        let instance = back::Instance::create(&quot;HalState&quot;, 1);
+        let surface = instance.create_surface(&amp;w);
+        HalState::new(&amp;w, inst, surf)
+    }
+}
+type HalStateWithOurBackend = HalState&lt;back::Instance&gt;;
+
+fn some_other_thing() {
+  /* lotsa things */
+  let w = createWindow();
+  let hal_state = HalStateWithOutBackend::create(&amp;w);
+  /* lotsa more things */
+}
+#}</code></pre></pre>
+<p>If we further implement <code>HalState</code> for each backend, it is possible that any
+users of <code>HalState</code> would also have access to <code>Instance</code> implementation
+specific methods if they require them (or if they will even exist).</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="06_textures.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="07_coordinates.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="06_textures.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="07_coordinates.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>

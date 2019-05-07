@@ -1,0 +1,1178 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Camera - learn-gfx-hal</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="01_introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><a href="02_opening_a_window.html"><strong aria-hidden="true">2.</strong> Opening A Window</a></li><li><a href="03_clear_the_window.html"><strong aria-hidden="true">3.</strong> Clear The Window</a></li><li><a href="04_triangle_intro.html"><strong aria-hidden="true">4.</strong> Triangle Intro</a></li><li><a href="05_shaders.html"><strong aria-hidden="true">5.</strong> Shaders</a></li><li><a href="06_textures.html"><strong aria-hidden="true">6.</strong> Textures</a></li><li><ol class="section"><li><a href="06_01_generalizing_hal_state.html"><strong aria-hidden="true">6.1.</strong> Generalizing HalState</a></li></ol></li><li><a href="07_coordinates.html"><strong aria-hidden="true">7.</strong> Coordinates</a></li><li><a href="08_camera.html" class="active"><strong aria-hidden="true">8.</strong> Camera</a></li><li><a href="09_depth_buffer.html"><strong aria-hidden="true">9.</strong> Depth Buffer</a></li><li><a href="10_instanced_drawing.html"><strong aria-hidden="true">10.</strong> Instanced Drawing</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">learn-gfx-hal</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="#camera" id="camera"><h1>Camera</h1></a>
+<p>Now that we've got everything in the right coordinate system, let's play around
+a little bit with that.</p>
+<p>Quick Review:</p>
+<p>A <strong>Transformation</strong> converts a point within one coordinate system into a new
+point in either the same coordinate system or a new coordinate system. When you
+apply the same transformation to a group of points, you can <strong>Translate</strong>
+(position change), <strong>Rotate</strong> (orientation change), or <strong>Scale</strong> (size change)
+that whole group.</p>
+<ul>
+<li>The Model Matrix transforms model space points into world space points. It
+&quot;places&quot; the model within the world. A &quot;model&quot; can be any collection of
+points, from a single point or a single line segment all the way up to <em>Geralt
+of Rivea</em> (clocking in at around 30,000 triangles in his Witcher 2 model,
+according to a quick google).</li>
+<li>The View Matrix transforms world space into view space. Instead of placing the
+camera in the world, it's actually the opposite sort of effect. It re-places
+everything within the whole world into the camera's vision of things, with the
+camera at the view space origin.</li>
+<li>The Projection Matrix transforms view space into Normalized Device
+Coordinates. This acts like the &quot;lens&quot; of the camera, and it's where things
+like field of view angle come into play.</li>
+</ul>
+<p>So in this lesson we'll first show an Orthographic Projection matrix, and then
+we'll focus on two different camera types.</p>
+<p>Side Note: Within math in general there <em>are</em> also other types of transformation
+besides translate, rotate, and scale. However, we don't use them in our graphics
+programming.</p>
+<a class="header" href="#quick-patch" id="quick-patch"><h2>Quick Patch</h2></a>
+<p>I've forgotten until now, but there's an important little bit you'll want to
+know about on Windows. There's a special attribute that you can set on your
+program to make it not have an attached console. This makes it so that if you
+run the program from outside of a terminal it won't open up a dummy terminal in
+the background.</p>
+<p><code>windows_subsystem = &quot;windows&quot;</code></p>
+<p>However, this also makes it so that the program can't do terminal output <em>even
+if</em> it was run from a terminal. Since we want to see terminal debug output stuff
+in debug builds, we want to only activate this attribute in builds <em>without</em>
+<code>debug_assertions</code>.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#![cfg_attr(not(debug_assertions), windows_subsystem = &quot;windows&quot;)]
+#fn main() {
+#}</code></pre></pre>
+<p>(Note: if you have <code>windows_subsystem = &quot;windows&quot;</code> set on a program and run it
+from the command line of a terminal <em>other than</em> <code>cmd.exe</code> and PowerShell (eg:
+Git Bash) you might still get terminal output. But you have to ask yourself, who
+would be so heretical?</p>
+<a class="header" href="#orthographic-projection" id="orthographic-projection"><h1>Orthographic Projection</h1></a>
+<p>I mentioned it in passing before, but there's a second major category of
+projection that you might sometimes use. We're currently using
+<a href="https://en.wikipedia.org/wiki/3D_projection#Perspective_projection">Perspective</a>,
+which makes things look &quot;real&quot; because parallel lines will converge as they move
+away from you. There's also
+<a href="https://en.wikipedia.org/wiki/3D_projection#Orthographic_projection">Orthographic</a>,
+which makes things look more &quot;tactical&quot; because parallel lines <em>don't</em> meet up
+in the distance. Like SimCity or Civilization.</p>
+<p>Since our scene is a bunch of cubes floating around in space, the orthographic
+projection is going to look kinda weird, but we'll slot it in there as an
+option. When the users presses the Tab key it'll flip a bool to swap between the
+two projections.</p>
+<a class="header" href="#update-draw_cubes_frame" id="update-draw_cubes_frame"><h2>Update <code>draw_cubes_frame</code></h2></a>
+<p>First, we'll want to control the view and projection as part of our LocalState
+now. That makes sense, in a game the camera position is more a part of the game
+state than a part of the graphics driver.</p>
+<p>We just adjust the function to accept a <code>view_projection</code> matrix that it's given
+for the scene, and we'll just decide what the view and projection are before we
+call here.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  pub fn draw_cubes_frame(
+    &amp;mut self, view_projection: &amp;glm::TMat4&lt;f32&gt;, models: &amp;[glm::TMat4&lt;f32&gt;],
+  ) -&gt; Result&lt;(), &amp;'static str&gt; {
+#}</code></pre></pre>
+<a class="header" href="#update-userinput" id="update-userinput"><h2>Update <code>UserInput</code></h2></a>
+<p>Now we have to track if the user wants us to swap the projection. First we add
+another field to the inputs.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[derive(Debug, Clone, Default)]
+pub struct UserInput {
+  pub end_requested: bool,
+  pub new_frame_size: Option&lt;(f64, f64)&gt;,
+  pub new_mouse_position: Option&lt;(f64, f64)&gt;,
+  pub swap_projection: bool,
+  pub seconds: f32,
+}
+#}</code></pre></pre>
+<p>Then we add another match case to our event polling:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      Event::WindowEvent {
+        event:
+          WindowEvent::KeyboardInput {
+            input:
+              KeyboardInput {
+                state: ElementState::Pressed,
+                virtual_keycode: Some(VirtualKeyCode::Tab),
+                ..
+              },
+            ..
+          },
+        ..
+      } =&gt; {
+        // Each time we see TAB we flip if a projection swap has been requested.
+        // This will probably only happen once per frame anyway.
+        output.swap_projection = !output.swap_projection;
+      }
+#}</code></pre></pre>
+<p>Ya get all that? It's pretty wordy, but that's just the <code>winit</code> way to say &quot;Tab
+was pressed&quot;: KeyboardInput + EventState::Pressed + VirtualKeyCode::Tab.</p>
+<a class="header" href="#update-localstate" id="update-localstate"><h2>Update <code>LocalState</code></h2></a>
+<p>Now the <code>LocalState</code> will hold two different projection matrices: one for
+perspective and one for orthographic. We'll flip which one we use with a bool.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[derive(Debug, Clone)]
+pub struct LocalState {
+  pub frame_width: f64,
+  pub frame_height: f64,
+  pub mouse_x: f64,
+  pub mouse_y: f64,
+  pub cubes: Vec&lt;glm::TMat4&lt;f32&gt;&gt;,
+  pub view: glm::TMat4&lt;f32&gt;,
+  pub perspective_projection: glm::TMat4&lt;f32&gt;,
+  pub orthographic_projection: glm::TMat4&lt;f32&gt;,
+  pub is_orthographic: bool,
+  pub spare_time: f32,
+}
+#}</code></pre></pre>
+<p>Which means we add a bit to our &quot;update from user input&quot; method:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+    if input.swap_projection {
+      self.is_orthographic = !self.is_orthographic;
+    }
+#}</code></pre></pre>
+<p>and now we need to initialize all the new data when we first make the LocalState
+value. Once again, <code>nalgebra-glm</code> has many different <code>orthographic</code> projections
+to pick from, and we want <code>_lh_zo</code>. This time instead of picking an aspect ratio
+and view angle (plus near plane and far plane) we pick the left, right, bottom,
+and top bounds of the view (plus near plane and far plane). The bounds are in
+world coordinates, and I picked +/- 5.0 since our cubes are in that general
+area. For your own code you'd need to decide on a comfortable value based on
+your world scale and such.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+    LocalState {
+      frame_width,
+      frame_height,
+      mouse_x: 0.0,
+      mouse_y: 0.0,
+      cubes: vec![
+        glm::identity(),
+        glm::translate(&amp;glm::identity(), &amp;glm::make_vec3(&amp;[1.5, 0.1, 0.0])),
+        glm::translate(&amp;glm::identity(), &amp;glm::make_vec3(&amp;[-3.0, 2.0, 3.0])),
+        glm::translate(&amp;glm::identity(), &amp;glm::make_vec3(&amp;[0.5, -4.0, 4.0])),
+        glm::translate(&amp;glm::identity(), &amp;glm::make_vec3(&amp;[-3.4, -2.3, 1.0])),
+        glm::translate(&amp;glm::identity(), &amp;glm::make_vec3(&amp;[-2.8, -0.7, 5.0])),
+      ],
+      spare_time: 0.0,
+      view: glm::look_at_lh(
+        &amp;glm::make_vec3(&amp;[0.0, 0.0, -5.0]),
+        &amp;glm::make_vec3(&amp;[0.0, 0.0, 0.0]),
+        &amp;glm::make_vec3(&amp;[0.0, 1.0, 0.0]).normalize(),
+      ),
+      perspective_projection: {
+        let mut temp = glm::perspective_lh_zo(800.0 / 600.0, f32::to_radians(50.0), 0.1, 100.0);
+        temp[(1, 1)] *= -1.0;
+        temp
+      },
+      orthographic_projection: {
+        let mut temp = glm::ortho_lh_zo(-5.0, 5.0, -5.0, 5.0, 0.1, 100.0);
+        temp[(1, 1)] *= -1.0;
+        temp
+      },
+      is_orthographic: false,
+    }
+#}</code></pre></pre>
+<p>And then in do_the_render we pick the right projection, combine it with our
+view, and call <code>draw_cubes_frame</code>:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+fn do_the_render(hal_state: &amp;mut HalState, local_state: &amp;LocalState) -&gt; Result&lt;(), &amp;'static str&gt; {
+  let projection = if local_state.is_orthographic {
+    local_state.orthographic_projection
+  } else {
+    local_state.perspective_projection
+  };
+  let view_projection = projection * local_state.view;
+  hal_state.draw_cubes_frame(&amp;view_projection, &amp;local_state.cubes)
+}
+#}</code></pre></pre>
+<p>Now we can see how ugly an orthographic projection is!</p>
+<p>Well, it's not always ugly, but we'd really need to have a different sort of
+scene of stuff to look at if we wanted it to look good. Unfortunately that's a
+little out of scope at the moment, so I'll leave trying that out up to you now
+that you know what to do. Right now I just wanted you to know that it's
+<em>possible</em>, and let you have a sense of why the <code>view</code> and <code>projection</code> matrix
+data isn't always just a single matrix based on the camera position.</p>
+<a class="header" href="#euler-angle-fps-camera" id="euler-angle-fps-camera"><h1>Euler Angle FPS Camera</h1></a>
+<p>Ultimately a camera is just about picking a <strong>location</strong> and <strong>orientation</strong> of
+where you're looking at things from. However, there's actually a few major types
+of camera similar to how there's a few major types of projection.</p>
+<p>First we'll go over a camera that uses &quot;<a href="https://en.wikipedia.org/wiki/Euler_angles">Euler
+Angles</a>&quot; to act like a First Person
+Shooter (FPS) camera. It's probably the easiest style of camera to think about.
+Euler angles means <code>pitch</code>, <code>roll</code>, and <code>yaw</code>. Like a plane.</p>
+<ul>
+<li><code>pitch</code>: angle up and down</li>
+<li><code>roll</code>: angle rocking side to side</li>
+<li><code>yaw</code>: angle left and right</li>
+</ul>
+<p>Actually, I lied just now, we <strong>won't</strong> be handling <code>roll</code>. If you allow the
+user to adjust their <code>roll</code> value as much as they want they can trigger a
+<a href="https://en.wikipedia.org/wiki/Gimbal_lock">Gimbal Lock</a>. For most first person
+experiences you don't need roll at all, so we'll block the user from
+accidentally giving themselves problems.</p>
+<p>Also, we'll limit the maximum <code>pitch</code> value to +/- 89 degrees. You remember that
+<code>up</code> vector thing from the <code>look_at</code> projection? If the <code>pitch</code> is allowed to
+hit 90 degrees then the <code>up</code> vector and the <code>front</code> vector line up and that's a
+problem too. Technically you <em>could</em> get around this pitch limitation, but
+letting the user get flipped over backwards is probably good enough reason to
+keep it in. Most users are actually very comfortable with the idea that they
+can't just look up more and more until their perspective has flipped over
+entirely, so it's still &quot;professional quality&quot; to have this limit in place.</p>
+<p>If you <em>do</em> want to enable total freedom of movement that'll be available in
+the next camera we go over.</p>
+<a class="header" href="#eulercamera-struct" id="eulercamera-struct"><h2>EulerCamera Struct</h2></a>
+<p>So we need a <em>location</em> and <em>orientation</em>. Our struct can hold exactly that:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[derive(Debug, Clone, Copy)]
+pub struct EulerFPSCamera {
+  pub position: glm::TVec3&lt;f32&gt;,
+  pitch_deg: f32,
+  yaw_deg: f32,
+}
+#}</code></pre></pre>
+<p>We've got a little extra note there in the names that the pitch and yaw will be
+in degrees, because degrees are usually easier for a human to think about, but
+the <code>sin</code> and <code>cos</code> functions are for <code>radians</code>, so when we eventually call
+those we'll need a conversion first.</p>
+<p>Now we declare the &quot;up&quot; vector, which is always the same for this particular
+camera. We need it for moving the camera and also for creating the <code>look_at</code>
+view matrix. Unfortunately, I'm not seeing a <code>const</code> function for making a TVec3
+value, so we'll declare the array as a const and then just convert it into a
+TVec3 when we need to.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+impl EulerCamera {
+  const UP: [f32; 3] = [0.0, 1.0, 0.0];
+#}</code></pre></pre>
+<p>Next we want a &quot;front&quot; or &quot;forward&quot; vector. This is a vector that points forward
+out of the camera into the world. We're actually tracking our pitch and yaw as
+angles, but we'll need the front vector for doing movement and computing the
+<code>look_at</code> matrix. This involves some <code>sin</code> and <code>cos</code> calls, so we have to
+convert our degree values into radian values. If we wanted we could cache this
+vector along side our angle values, but that's not really necessary (you
+probably only touch your camera once per frame) so we'll keep it simple and just
+build the vector from scratch each time.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  fn make_front(&amp;self) -&gt; glm::TVec3&lt;f32&gt; {
+    let pitch_rad = f32::to_radians(self.pitch_deg);
+    let yaw_rad = f32::to_radians(self.yaw_deg);
+    glm::make_vec3(&amp;[
+      yaw_rad.sin() * pitch_rad.cos(),
+      pitch_rad.sin(),
+      yaw_rad.cos() * pitch_rad.cos(),
+    ])
+  }
+#}</code></pre></pre>
+<p>Orientation updates are pretty simple, but we have to be mindful of the limits
+we talked about. We'll cap <code>pitch</code> at +/- 89 degrees, and we'll make sure that
+the <code>yaw</code> value gets wrapped to being within +/- 360.0 degrees. Remember that
+floats are more accurate the closer they are to zero, and we don't want any
+weird accuracy problems creeping up on us.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  pub fn update_orientation(&amp;mut self, d_pitch_deg: f32, d_yaw_deg: f32) {
+    self.pitch_deg = (self.pitch_deg + d_pitch_deg).max(-89.0).min(89.0);
+    self.yaw_deg = (self.yaw_deg + d_yaw_deg) % 360.0;
+  }
+#}</code></pre></pre>
+<p>Now we need a way to update the <em>position</em> of the camera. First of all, you can
+just assign the camera any new position at any time and it'll work right. However, we also want to support going &quot;forward&quot; and &quot;sideways&quot; relative to the current perspective (like you do in a first person game), so we'll want a method for that.</p>
+<p>We take in which keys are being held down and then how far the camera should
+move in whatever direction the keys determine. The distance moved is
+camera_speed * time_elapsed, but whoever calls <code>update_position</code> can just
+compute that on their side before they call us.</p>
+<p>The way that this works is that we first gather up all the deltas that the keys
+are trying to get us to do. If that total is zero we didn't move so we're done.
+If it's non-zero we first have to normalize the direction vector. If we didn't
+normalize our direction vector then moving forward <em>or</em> sideways would be &quot;1&quot;
+unit of distance but moving forward <em>and</em> sideways would end up being &quot;1.4&quot;
+(technically <code>sqrt(2)</code>) units of distance (<a href="https://en.wikipedia.org/wiki/Pythagorean_theorem">Pythagorean
+theorem</a>, yo). It's pretty
+silly for diagonal movement to be faster than direct movement, and even
+professional games such as
+<a href="https://en.wikipedia.org/wiki/The_Elder_Scrolls_III:_Morrowind">Morrowind</a> and
+<a href="https://en.wikipedia.org/wiki/Obduction_(video_game)">Obduction</a> make this easy
+mistake.</p>
+<p>Once we have our normalized direction vector, we scale the vector by our
+distance value and add it to our position.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  pub fn update_position(&amp;mut self, keys: &amp;HashSet&lt;VirtualKeyCode&gt;, distance: f32) {
+    let up = glm::make_vec3(&amp;Self::UP);
+    let forward = self.make_front();
+    let cross_normalized = glm::cross::&lt;f32, glm::U3&gt;(&amp;forward, &amp;up).normalize();
+    let mut move_vector =
+      keys
+        .iter()
+        .fold(glm::make_vec3(&amp;[0.0, 0.0, 0.0]), |vec, key| match *key {
+          VirtualKeyCode::W =&gt; vec + forward,
+          VirtualKeyCode::S =&gt; vec - forward,
+          VirtualKeyCode::A =&gt; vec + cross_normalized,
+          VirtualKeyCode::D =&gt; vec - cross_normalized,
+          VirtualKeyCode::E =&gt; vec + up,
+          VirtualKeyCode::Q =&gt; vec - up,
+          _ =&gt; vec,
+        });
+    if move_vector != glm::zero() {
+      move_vector = move_vector.normalize();
+      self.position += move_vector * distance;
+    }
+  }
+#}</code></pre></pre>
+<p>I've implemented it as a &quot;flying&quot; style camera here. It uses the front vector
+for movement, so if you look up while going forward then you also move up
+(depending on pitch). I've also set <code>Q</code> and <code>E</code> to shift the camera directly up
+and down. If that's not appropriate for your own program then you'd want to
+compute a forward vector with just X and Z changes based on <code>yaw</code> alone. What
+you'd probably actually want is to directly place the camera within the location
+given to you by some physics object as it moves through the simulation, and just
+let the physics system handle all the position updates. Just assigning to the
+position field directly is fine, that's why it's <code>pub</code>.</p>
+<p>(Note, the <code>A</code> and <code>D</code> math is sensitive to the fact that the projection matrix
+is flipping <code>Y</code> values <em>after</em> they pass through the View matrix. In other
+words, if you port this code to OpenGL where <code>Y</code> is up naturally then you'll
+need to flip which one is <code>+</code> and which one is <code>-</code>, otherwise you'll move
+left/right flipped).</p>
+<p>Finally, now that we can adjust the details on our camera, we just need to ask
+it to please give us the correct view matrix.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  pub fn make_view_matrix(&amp;self) -&gt; glm::TMat4&lt;f32&gt; {
+    glm::look_at_lh(
+      &amp;self.position,
+      &amp;(self.position + self.make_front()),
+      &amp;glm::make_vec3(&amp;Self::UP),
+    )
+  }
+#}</code></pre></pre>
+<p>Oh, and it needs at least one constructor because of those private fields. Let's
+give it a const constructor for being at a particular position. Always nice to
+have a const constructor if you can manage it.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  pub const fn at_position(position: glm::TVec3&lt;f32&gt;) -&gt; Self {
+    Self {
+      position,
+      pitch_deg: 0.0,
+      yaw_deg: 0.0,
+    }
+  }
+#}</code></pre></pre>
+<a class="header" href="#update-localstate-1" id="update-localstate-1"><h2>Update <code>LocalState</code></h2></a>
+<p>Now that we've got this nice camera we can replace out view matrix field with a
+camera field.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[derive(Debug, Clone)]
+pub struct LocalState {
+  pub frame_width: f64,
+  pub frame_height: f64,
+  pub mouse_x: f64,
+  pub mouse_y: f64,
+  pub cubes: Vec&lt;glm::TMat4&lt;f32&gt;&gt;,
+  pub camera: EulerCamera,
+  pub perspective_projection: glm::TMat4&lt;f32&gt;,
+  pub orthographic_projection: glm::TMat4&lt;f32&gt;,
+  pub is_orthographic: bool,
+  pub spare_time: f32,
+}
+#}</code></pre></pre>
+<p>And in the LocalState initializer we need to place the camera at the same
+position as before.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+camera: EulerCamera::at_position(glm::make_vec3(&amp;[0.0, 0.0, -5.0])),
+#}</code></pre></pre>
+<p>which means that <code>do_the_render</code> needs a minor update to get a view matrix in
+the new way.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+fn do_the_render(hal_state: &amp;mut HalState, local_state: &amp;LocalState) -&gt; Result&lt;(), &amp;'static str&gt; {
+  let projection = if local_state.is_orthographic {
+    local_state.orthographic_projection
+  } else {
+    local_state.perspective_projection
+  };
+  let view_projection = projection * local_state.camera.make_view_matrix();
+  hal_state.draw_cubes_frame(&amp;view_projection, &amp;local_state.cubes)
+}
+#}</code></pre></pre>
+<p>That finally brings us to <code>LocalState::update_from_input</code>.</p>
+<p>This part is a little bit of a pickle. We're updating our &quot;physics&quot; by 1/60th of
+a second every 1/60th of a second. However, we're accepting input faster than
+that in some cases (if Mailbox mode is selected). Does the camera count as part
+of our physics? Can we do some updates to it faster than 60fps and then others
+at only 60fps? Should we buffer <em>all</em> updates until the next physics frame and
+only do them exactly when the rest of the physics happens? Well, unfortunately
+that's an answer you'll need to sort out for yourself.</p>
+<p>Our camera isn't <em>really</em> connected to anything, but if your camera <strong>is</strong>
+connected to an actual physics entity (like a player entity) then you'd probably
+need to buffer up the inputs that come in faster than 60fps, do your physics at
+the right time, and then update your camera only in response to the physics
+simulation result. Or you could not even use Mailbox mode if you don't want to
+worry about it possibly being there and possibly not being there.</p>
+<p>For our example, I'll have the camera code be disjoint from the physics code
+just to see how it would be done if you wanted to do it that way.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+    // do camera updates distinctly from physics, based on this frame's time
+    const MOUSE_SENSITIVITY: f32 = 0.05;
+    let d_pitch_deg = input.orientation_change.1 * MOUSE_SENSITIVITY;
+    let d_yaw_deg = -input.orientation_change.0 * MOUSE_SENSITIVITY;
+    self.camera.update_orientation(d_pitch_deg, d_yaw_deg);
+    self
+      .camera
+      .update_position(&amp;input.keys_held, 5.0 * input.seconds);
+#}</code></pre></pre>
+<a class="header" href="#update-userinput-1" id="update-userinput-1"><h2>Update <code>UserInput</code></h2></a>
+<p>So obviously our user input is storing a few more things than before, let's look at that.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[derive(Debug, Clone, Default)]
+pub struct UserInput {
+  pub end_requested: bool,
+  pub new_frame_size: Option&lt;(f64, f64)&gt;,
+  pub new_mouse_position: Option&lt;(f64, f64)&gt;,
+  pub swap_projection: bool,
+  pub keys_held: HashSet&lt;VirtualKeyCode&gt;,
+  pub orientation_change: (f32, f32),
+  pub seconds: f32,
+}
+#}</code></pre></pre>
+<p>Okay, and we're actually going to be tracking quite a bit more now, so our
+polling method has a few more arguments.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  pub fn poll_events_loop(
+    winit_state: &amp;mut WinitState, last_timestamp: &amp;mut Instant,
+    keys_held: &amp;mut HashSet&lt;VirtualKeyCode&gt;, focused: &amp;mut bool, grabbed: &amp;mut bool,
+  ) -&gt; Self {
+#}</code></pre></pre>
+<p>Actually, all that stuff has to do with <code>winit</code> really, so it should be in the
+<code>WinitState</code>, don't you think? We're already taking a <code>&amp;mut WinitState</code>.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[derive(Debug)]
+pub struct WinitState {
+  pub events_loop: EventsLoop,
+  pub window: Window,
+  pub keys_held: HashSet&lt;VirtualKeyCode&gt;,
+  pub grabbed: bool,
+}
+#}</code></pre></pre>
+<p>Alright, and now our match statement is totally different, so we'll take it
+again from the top. First though, we have to do an annoying manual split of the
+borrow.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+impl UserInput {
+  pub fn poll_events_loop(winit_state: &amp;mut WinitState, last_timestamp: &amp;mut Instant) -&gt; Self {
+    let mut output = UserInput::default();
+    // We have to manually split the borrow here. rustc, why you so dumb sometimes?
+    let events_loop = &amp;mut winit_state.events_loop;
+    let window = &amp;mut winit_state.window;
+    let keys_held = &amp;mut winit_state.keys_held;
+    let grabbed = &amp;mut winit_state.grabbed;
+#}</code></pre></pre>
+<p>Now we can start the events poll. First up is CloseRequested, which we just mark
+down in our output.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+    // now we actually poll those events
+    events_loop.poll_events(|event| match event {
+      // Close when asked
+      Event::WindowEvent {
+        event: WindowEvent::CloseRequested,
+        ..
+      } =&gt; output.end_requested = true,
+#}</code></pre></pre>
+<p>Next we need to track what the state of all keys is. This is a little annoying
+at the edge cases, because of <a href="https://en.wikipedia.org/wiki/Rollover_(key)">key
+rollover</a>, and also because if the
+uses presses and holds a key <em>before the window opens</em> we won't get the key
+press event for that. Most of the time though we can fairly reliably get key
+info. Now there's two ways to do this: one is through the
+<a href="https://docs.rs/winit/0.18.1/winit/enum.WindowEvent.html">WindowEvent</a> type and
+the other is through the
+<a href="https://docs.rs/winit/0.18.1/winit/enum.DeviceEvent.html">DeviceEvent</a> type. We
+want to use DeviceEvent. The difference is that you only get window events for
+keys when your window is active, but you get device events at all times. If the
+user presses or releases a key when the window is out of focus we want to track
+that. If they press a key and then click in the window, we want to respond to
+that <em>right away</em> without them having to release and press the key again.
+Similarly, if they have a key held and then switch to another window, we want to
+know if it got released while we didn't have focus.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      // Track all keys, all the time. Note that because of key rollover details
+      // it's possible to get key released events for keys we don't think are
+      // pressed. This is a hardware limit, not something you can evade.
+      Event::DeviceEvent {
+        event:
+          DeviceEvent::Key(KeyboardInput {
+            virtual_keycode: Some(code),
+            state,
+            ..
+          }),
+        ..
+      } =&gt; drop(match state {
+        ElementState::Pressed =&gt; keys_held.insert(code),
+        ElementState::Released =&gt; keys_held.remove(&amp;code),
+      }),
+#}</code></pre></pre>
+<p>That would be the end of it, but macOS doesn't provide keys as
+device events. So we need to handle keys as window events too. Also, even on
+non-mac there's a few window event keys that we want to respond do. We're
+keeping &quot;tab swaps the projection&quot;, and also we're adding &quot;escape undoes the
+grab&quot;.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+// We want to respond to some of the keys specially when they're also
+      // window events too (meaning that the window was focused when the event
+      // happened).
+      Event::WindowEvent {
+        event:
+          WindowEvent::KeyboardInput {
+            input:
+              KeyboardInput {
+                state,
+                virtual_keycode: Some(code),
+                ..
+              },
+            ..
+          },
+        ..
+      } =&gt; {
+        #[cfg(feature = &quot;metal&quot;)]
+        {
+          match state {
+            ElementState::Pressed =&gt; keys_held.insert(code),
+            ElementState::Released =&gt; keys_held.remove(&amp;code),
+          }
+        };
+        if state == ElementState::Pressed {
+          match code {
+            VirtualKeyCode::Tab =&gt; output.swap_projection = !output.swap_projection,
+            VirtualKeyCode::Escape =&gt; {
+              if *grabbed {
+                debug!(&quot;Escape pressed while grabbed, releasing the mouse!&quot;);
+                window
+                  .grab_cursor(false)
+                  .expect(&quot;Failed to release the mouse grab!&quot;);
+                window.hide_cursor(false);
+                *grabbed = false;
+              }
+            }
+            _ =&gt; (),
+          }
+        }
+      }
+#}</code></pre></pre>
+<p>We also want to use <code>DeviceEvent</code> to track mouse motion. The difference between
+this and the <code>CursorMoved</code> event from before is that <code>WindowEvent::CursorMoved</code>
+gives the <em>position within the window</em>, while <code>DeviceEvent::MouseMotion</code> gives
+the mouse's <em>position delta</em>. We're going to &quot;grab&quot; the mouse to lock it within
+the window. When the mouse goes all the way to left and hits x=0 we'd stop
+getting CursorMoved events, but we want to keep turning the view as long as the
+user keeps turning the mouse. By using <code>MouseMotion</code> events we can track the
+mouse's intended movement even while the cursor is grabbed.</p>
+<p>Also, this is the part where you'd invert the X or Y movement effect if you
+wanted to offer that option to users.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      // Always track the mouse motion, but only update the orientation if
+      // we're &quot;grabbed&quot;.
+      Event::DeviceEvent {
+        event: DeviceEvent::MouseMotion { delta: (dx, dy) },
+        ..
+      } =&gt; {
+        if *grabbed {
+          output.orientation_change.0 -= dx as f32;
+          output.orientation_change.1 -= dy as f32;
+        }
+      }
+#}</code></pre></pre>
+<p>Next, if the user clicks in the window we'll grab the cursor. There's a literal
+<code>grab_cursor</code> call which <em>on Windows</em> will automatically hide the cursor too,
+but on macOS and some Linux distributions you have to issue <code>hide_cursor</code> as a separate
+command.
+We'll just do both, since it doesn't hurt to tell the already-hidden cursor to
+hide again on Windows.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      // Left clicking in the window causes the mouse to get grabbed
+      Event::WindowEvent {
+        event:
+          WindowEvent::MouseInput {
+            state: ElementState::Pressed,
+            button: MouseButton::Left,
+            ..
+          },
+        ..
+      } =&gt; {
+        if *grabbed {
+          debug!(&quot;Click! We already have the mouse grabbed.&quot;);
+        } else {
+          debug!(&quot;Click! Grabbing the mouse.&quot;);
+          window.grab_cursor(true).expect(&quot;Failed to grab the mouse!&quot;);
+          window.hide_cursor(true);
+          *grabbed = true;
+        }
+      }
+#}</code></pre></pre>
+<p>If the focus is lost, we want to automatically release any &quot;grab&quot;. This is just
+the same two calls with reverse values.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      // Automatically release the mouse when focus is lost
+      Event::WindowEvent {
+        event: WindowEvent::Focused(false),
+        ..
+      } =&gt; {
+        if *grabbed {
+          debug!(&quot;Lost Focus, releasing the mouse grab...&quot;);
+          window
+            .grab_cursor(false)
+            .expect(&quot;Failed to release the mouse grab!&quot;);
+          window.hide_cursor(false);
+          *grabbed = false;
+        } else {
+          debug!(&quot;Lost Focus when mouse wasn't grabbed.&quot;);
+        }
+      }
+#}</code></pre></pre>
+<p>Finally, we'll update our window size still. I'm not sure we're using that any
+more, but oh well. We can just track it anyway.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      // Update our size info if the window changes size.
+      Event::WindowEvent {
+        event: WindowEvent::Resized(logical),
+        ..
+      } =&gt; {
+        output.new_frame_size = Some((logical.width, logical.height));
+      }
+#}</code></pre></pre>
+<p>And at the end, after the event polling, we want to be sure to hand over a clone
+of the <code>keys_held</code> set <em>only if</em> we're grabbed. Otherwise the program would do
+stuff even if it's out of focus. I'm sure there's some program that wants to do
+that, but not us.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+    output.keys_held = if *grabbed {
+      keys_held.clone()
+    } else {
+      HashSet::new()
+    };
+#}</code></pre></pre>
+<p>And everything works!</p>
+<p>Except we can't roll yet.</p>
+<a class="header" href="#quaternion-free-camera" id="quaternion-free-camera"><h1>Quaternion Free Camera</h1></a>
+<p><em>&quot;what's going on? oh god quaternions, no effin' clue&quot; -Xavil</em></p>
+<p>Now we're gonna use <a href="https://en.wikipedia.org/wiki/Quaternion">Quaternions</a>.
+They're not super covered in the Khan Academy &quot;Vector and Matrix&quot; math course
+that I linked last lesson, at least not from what I saw in their table of
+contents listing. Instead, try <a href="https://www.3dgep.com/understanding-quaternions/">this link
+here</a> to learn about them, or
+perhaps
+<a href="http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-17-quaternions/">here</a>
+if you want a short version that's mostly computer graphics oriented. You could
+also try <a href="https://eater.net/quaternions/">these videos</a> if you're better at
+learning through video. Quaternion are sure <em>weird</em>. They're 4D! Isn't that
+already pretty weird all on its own?</p>
+<p>With the power of quaternions at our finger tips we're going to make a &quot;free
+camera&quot;, which means that we can pitch, yaw, <em>and also roll</em> as much as we want.
+There's still a <em>mild</em> limit that if there's a large change in more than one
+axis in a single <code>update_orientation</code> call then you could trigger a gimbal lock,
+but for normal use that's not a danger, and if you really need to do big
+orientation changes you can break it into a series of smaller changes.</p>
+<p>The math here is actually so complicated that I honestly don't know how most of
+it works exactly. However, <a href="https://github.com/termhn">termhn</a> managed to <s>help
+me</s> <em>just tell me what to try over and over until it worked</em> and we got a
+quaternion free camera going with only mild struggles. Cargo cult programming at
+its finest.</p>
+<p>So we start with our QuaternionFreeCamera struct, once again we have a public
+position field and an internal way to track our orientation. Instead of storing
+euler angles we store a quaternion.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[derive(Debug, Clone, Copy)]
+pub struct QuaternionFreeCamera {
+  pub position: glm::TVec3&lt;f32&gt;,
+  quat: glm::Qua&lt;f32&gt;,
+}
+#}</code></pre></pre>
+<p>Now we want to update the orientation. How do we even update a quaternion? Well,
+you don't do it directly in an <code>x += 1</code> sort of way. Instead, if we take the
+desired change in orientation as a quaternion, we can multiply it by our current
+quaternion and the output quaternion is our old one with the change applied.
+This is somewhat magical, but it's <em>similar</em> to how you can multiply one
+transformation matrix with another and they &quot;combine&quot; into a new transformation.</p>
+<p>And I promised that this time we can roll too, so our update function starts
+like this:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+impl QuaternionFreeCamera {
+  pub fn update_orientation(&amp;mut self, d_pitch: f32, d_yaw: f32, d_roll: f32) {
+    unimplemented!();
+  }
+#}</code></pre></pre>
+<p>Please note that we're <em>no longer dealing in degrees</em>. You'll see why in a
+moment.</p>
+<p>Alright so what <em>is</em> a quaternion? Well it's just a way to talk about a 3d
+sphere on the surface of a 4d hypersphere. Obviously. Totally normal concept.
+How do we represent a quaternion? Well, there's one real axis and three
+imaginary axes. You know how a standard imaginary number is like <code>a + bi</code>?
+That's one real axis and one imaginary axis. A quaternion is just more imaginary
+axes, so we write them as <code>a + bi + cj+ dk</code>.</p>
+<p>In code terms, a quaternion is basically four <code>f32</code> values (well, could be
+<code>f64</code>, but you know). Normally to make a quaternion you'd use an angle and 3d
+axis. The angle is of course in radians and then axis should of course be
+normalized. Then you use this formula to get the four components:</p>
+<pre><code>x = RotationAxis.x * sin(RotationAngle / 2)
+y = RotationAxis.y * sin(RotationAngle / 2)
+z = RotationAxis.z * sin(RotationAngle / 2)
+w = cos(RotationAngle / 2)
+</code></pre>
+<p>You'll notice that we've switched from <code>a</code>, <code>b</code>, <code>c</code>, and <code>d</code> to using <code>x</code>, <code>y</code>,
+<code>z</code>, and <code>w</code>. That's the convention. Presumably because folks wanted to have a
+component output that's related to the input <code>x</code> axis also be named <code>x</code> and
+such. So now our &quot;real&quot; component is the <code>w</code> value at the end of the list, not
+the <code>a</code> value at the start of the list. Important to keep that straight.</p>
+<p>So we could easily call
+<a href="https://docs.rs/nalgebra-glm/0.2.1/nalgebra_glm/fn.quat_angle_axis.html">nalgebra_glm::quat_angle_axis</a>
+to make a quaternion... but we don't <em>have</em> an axis and angle. We have euler
+angles in unknown units.</p>
+<p>This is where it gets strange. You see, I read <a href="http://in2gpu.com/2016/03/14/opengl-fps-camera-quaternion/">an
+article</a> that
+implied that you can just throw the delta values directly into a quaternion and
+it works. That is, if you call
+<a href="https://docs.rs/nalgebra-glm/0.2.1/nalgebra_glm/fn.quat.html">nalgebra_glm::quat</a>
+you <em>can</em> specify <code>x</code>, <code>y</code>, <code>z</code>, and <code>w</code> without needing to know an axis and
+angle. Normally you probably wouldn't do this unless you were reading in a
+quaternion from a file or something, but that's what the article said to do. I
+tried it, and it works. I was just as shocked as you to see this.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+    let delta_quat = glm::quat(d_pitch, d_yaw, d_roll, 1.0);
+#}</code></pre></pre>
+<p>So I asked around and <a href="https://github.com/pinobatch">PinoBatch</a> pointed me to a
+thing called <a href="https://en.wikipedia.org/wiki/Paraxial_approximation">Paraxial
+Approximation</a>. If you
+have a very small angle (&lt;10 degrees) you can skip computing a <code>sin</code> and just
+use the value directly with minimal error compared to having done the <code>sin</code>. So
+if we assign an input delta directly to <code>x</code>, <code>y</code>, or <code>z</code> we can <em>act like</em> we
+did the right thing for some small rotation angle and just get a de-normalized
+quaternion value. Okay? So that means that our inputs are effectively <em>double
+radians</em>. Obviously(?). If we want to change 1 degree, that's 0.0175 radians,
+and so we'd want only <code>0.00875</code> for our delta value.</p>
+<p>Well, <em>almost</em>. Because we've got three deltas and we need four parts, so what's
+our <code>w</code> value? <a href="https://github.com/grovesNL">groves</a> suggested that &quot;1 is
+usually the identity&quot;, so we started with that. And it worked. Do other values
+for <code>w</code> work? Yes they also work. As long as the value isn't 0 then it works.
+And smaller <code>w</code> makes you spin faster, while large <code>w</code> makes you spin slower. So
+if <code>w</code> can affect the rotation speed.... what?</p>
+<p>Okay, <em>this</em> is where <a href="https://github.com/aaaaaa123456789">ax6</a> swooped in because
+they know quaternions and they don't like cargo cult programming.</p>
+<p>So imagine that we wanted to adjust <em>just one</em> axis. That's easy. Keeping in
+mind that we're using <em>double</em> radians in place of radians, each axis has a
+formula for it like this:</p>
+<pre><code>// double radian formulas, divide the angle by 2 for normal radians
+q(pitch) = cos(pitch) + (sin(pitch), 0, 0)
+q(yaw) = cos(yaw) + (0, sin(yaw), 0)
+q(roll) = cos(roll) + (0, 0, sin(roll))
+</code></pre>
+<p>So we just pick one of those and</p>
+<pre><code>new = old * q(yaw)
+</code></pre>
+<p>But we want three adjustments. Okay, so just like with stacking up matrix
+transforms we can stack up quaternion multiplications by adding more on the
+right.</p>
+<pre><code>new = old * q(yaw) * q(pitch) * q(roll)
+</code></pre>
+<p>But what does that <em>actually</em> mean if you expand it out?</p>
+<pre><code>q(yaw) * q(pitch) = (cos yaw + (0, sin yaw, 0)) * (cos pitch + (sin pitch, 0, 0))
+</code></pre>
+<p>or alternately</p>
+<pre><code>(cos yaw * cos pitch) + (cos yaw * sin pitch, sin yaw * cos pitch, - sin yaw * sin pitch)
+</code></pre>
+<p>And then we multiply in the q(roll) on the right to get...</p>
+<pre><code>q = (cos yaw * cos pitch * cos roll - sin yaw * sin pitch * sin roll) +
+  (cos yaw * sin pitch * cos roll + sin yaw * cos pitch * sin roll,
+  sin yaw * cos pitch * cos roll - cos yaw * sin pitch * sin roll,
+  cos yaw * cos pitch * sin roll - sin yaw * sin pitch * cos roll)
+</code></pre>
+<p>Which is <em>extremely ugly</em>, but this is where the Paraxial Approximation kicks
+in:</p>
+<ol>
+<li>cos(foo) = 1, since the angles are small</li>
+<li>sin(foo) = foo, since the angles are small</li>
+<li>sin(foo) * sin(bar) = 0, because with angles being that small, multiplying
+two of them gives a tiny number that almost vanishes</li>
+</ol>
+<p>So all cosines are cancelled out, any term with more than one sine is wholly
+cancelled out, and all remaining sines are replaced by the actual angles and you
+get an approximation of</p>
+<pre><code>q = 1 + (pitch, yaw, roll)
+</code></pre>
+<p>Since we do a normalization step after multiplying our old quaternion by the
+delta quaternion, the approximation is close enough to let it all work out. Our
+effective rotation angle of the delta quaternion is <code>2 * arccos(Re(q) / |q|)</code>,
+with <code>Re(q)</code> being &quot;the real part of <code>q</code>&quot;, meaning <code>w</code>.  Since <code>arccos</code> has a
+negative derivative, increasing the <code>w</code> value reduces the angle of rotation.</p>
+<p><strong>So, if you didn't get all that, it's okay.</strong> It's totally fine. We're <em>deep</em>
+into the realm of magic here, so if you just want to use this code without
+understanding why exactly it all adds up that's okay. Honestly I don't quite get
+it myself. Now we finally know how to update our orientation at least:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  /// Updates the orientation of the camera.
+  ///
+  /// Inputs should be in double radians, and also limited to being less than 10
+  /// degrees at a time to keep approximation error minimal.
+  pub fn update_orientation(&amp;mut self, d_pitch_2rad: f32, d_yaw_2rad: f32, d_roll_2rad: f32) {
+    // This gives a non-unit quaternion! That's okay because of the normalization step.
+    let delta_quat = glm::quat(d_pitch_2rad, d_yaw_2rad, d_roll_2rad, 1.0);
+    self.quat = glm::quat_normalize(&amp;(self.quat * delta_quat));
+  }
+#}</code></pre></pre>
+<p>To update the position we do mostly the same things as the EulerFPSCamera did.</p>
+<p>We sum up all the directions we're trying to go, check that it's non-zero, if so
+we normalize it. Then there's a change: we can't yet adjust the magnitude and
+then add. First we have to rotate our normalized vector vector with our
+quaternion to give it the correct orientation relative to our own orientation.
+Once it's rotated we multiply and add like before.</p>
+<p>In the EulerFPSCamera the re-orientation was &quot;secretly&quot; a part of the
+<code>make_font</code> computation (see how the front vec is based on the current pitch and
+yaw values?). Now that we're storing a quaternion it's a little easier to just
+do the re-orientation with a single rotation at the end.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  pub fn update_position(&amp;mut self, keys: &amp;HashSet&lt;VirtualKeyCode&gt;, distance: f32) {
+    let up = glm::make_vec3(&amp;[0.0, 1.0, 0.0]);
+    let forward = glm::make_vec3(&amp;[0.0, 0.0, 1.0]);
+    let cross_normalized = glm::cross::&lt;f32, glm::U3&gt;(&amp;forward, &amp;up).normalize();
+    let mut move_vector =
+      keys
+        .iter()
+        .fold(glm::make_vec3(&amp;[0.0, 0.0, 0.0]), |vec, key| match *key {
+          VirtualKeyCode::W =&gt; vec + forward,
+          VirtualKeyCode::S =&gt; vec - forward,
+          VirtualKeyCode::A =&gt; vec + cross_normalized,
+          VirtualKeyCode::D =&gt; vec - cross_normalized,
+          VirtualKeyCode::E =&gt; vec + up,
+          VirtualKeyCode::Q =&gt; vec - up,
+          _ =&gt; vec,
+        });
+    if move_vector != glm::zero() {
+      move_vector = move_vector.normalize();
+      let rotated_move_vector = glm::quat_rotate_vec3(&amp;self.quat, &amp;move_vector);
+      self.position += rotated_move_vector * distance;
+    }
+  }
+#}</code></pre></pre>
+<p>To make a view matrix from this we have to expand our quaternion into a rotation
+matrix, expand out position into a translation matrix, and then invert
+<code>translation * rotation</code>. We invert the matrix because what the camera is
+actually storing is <em>its own model matrix</em>. However, we're not trying to put the
+camera in the world, we're trying to send the whole world backwards through the
+camera. Uh, if that makes sense?</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  pub fn make_view_matrix(&amp;self) -&gt; glm::TMat4&lt;f32&gt; {
+    let rotation = glm::quat_to_mat4(&amp;self.quat);
+    let translation = glm::translation(&amp;self.position);
+    glm::inverse(&amp;(translation * rotation))
+  }
+#}</code></pre></pre>
+<p>And of course want a way to make a FreeCamera from just a position:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  pub fn at_position(position: glm::TVec3&lt;f32&gt;) -&gt; Self {
+    Self {
+      position,
+      quat: glm::quat_identity(),
+    }
+  }
+#}</code></pre></pre>
+<p>Now we can finally move through box space in any way that we want!</p>
+<p>Almost!</p>
+<p>We have to update <code>LocalState</code> to have the new camera type, and we also have to
+update how it computes the orientation deltas. Specifically, we have to turn the
+pitch and yaw changes <em>way</em> down. Remember how we talked about the input values
+needing to be small? Something like <code>0.0005</code> is a comfortable amount for one
+frame of change.</p>
+<p>Also, we will use <code>Z</code> and <code>C</code> to roll port and starboard.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+    const MOUSE_SENSITIVITY: f32 = 0.0005;
+    let d_pitch = -input.orientation_change.1 * MOUSE_SENSITIVITY;
+    let d_yaw = -input.orientation_change.0 * MOUSE_SENSITIVITY;
+    let mut d_roll = 0.0;
+    if input.keys_held.contains(&amp;VirtualKeyCode::Z) {
+      d_roll += 0.00875;
+    }
+    if input.keys_held.contains(&amp;VirtualKeyCode::C) {
+      d_roll -= 0.00875;
+    }
+    self.camera.update_orientation(d_pitch, d_yaw, d_roll);
+    self
+      .camera
+      .update_position(&amp;input.keys_held, 5.0 * input.seconds);
+#}</code></pre></pre>
+<p><img src="images/camera-complete.png" alt="camera-complete" /></p>
+<p>Well, the boxes <em>still</em> draw over each other weird. Next lesson is finally putting
+in that Depth Buffer stuff so that we can make them knock it off and act like
+proper visuals.</p>
+<p>As always, the code for this lesson is in the
+<a href="https://github.com/Lokathor/learn-gfx-hal/tree/master/examples">examples/</a>
+directory.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="07_coordinates.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="09_depth_buffer.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="07_coordinates.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="09_depth_buffer.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>

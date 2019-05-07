@@ -1,0 +1,1223 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Textures - learn-gfx-hal</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="01_introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><a href="02_opening_a_window.html"><strong aria-hidden="true">2.</strong> Opening A Window</a></li><li><a href="03_clear_the_window.html"><strong aria-hidden="true">3.</strong> Clear The Window</a></li><li><a href="04_triangle_intro.html"><strong aria-hidden="true">4.</strong> Triangle Intro</a></li><li><a href="05_shaders.html"><strong aria-hidden="true">5.</strong> Shaders</a></li><li><a href="06_textures.html" class="active"><strong aria-hidden="true">6.</strong> Textures</a></li><li><ol class="section"><li><a href="06_01_generalizing_hal_state.html"><strong aria-hidden="true">6.1.</strong> Generalizing HalState</a></li></ol></li><li><a href="07_coordinates.html"><strong aria-hidden="true">7.</strong> Coordinates</a></li><li><a href="08_camera.html"><strong aria-hidden="true">8.</strong> Camera</a></li><li><a href="09_depth_buffer.html"><strong aria-hidden="true">9.</strong> Depth Buffer</a></li><li><a href="10_instanced_drawing.html"><strong aria-hidden="true">10.</strong> Instanced Drawing</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">learn-gfx-hal</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="#textures" id="textures"><h1>Textures</h1></a>
+<p>You can draw a lot with just triangles and colors. Do a search for &quot;low poly
+art&quot; and you'll find a bunch of stuff that's just lots and lots of color shaded
+triangles. Like the digital version of stained glass art. It's really cool.</p>
+<p>But you can't make Skyrim or Smash Bros with just colored triangles. At some
+point you want to stick a picture of a thing on those triangles. A picture that
+you place onto a model is called a &quot;texture&quot;, even though really it's just a
+normal image. In fact, you can use <code>gfx-hal</code> to render into an image, then keep
+that image around and use it to texture your models.</p>
+<p>A picture has &quot;pixels&quot;, and sometimes you'll hear about a texture having
+&quot;texels&quot;. Just a way that some people distinguish between images intended for
+final use and images intended for placement onto a model. The thing that's the
+most special about textures is that since X, Y, and Z are already being used for
+3D spatial positioning of a vertex, the position within a texture that it maps
+to is called U and V. This is called <a href="https://en.wikipedia.org/wiki/UV_mapping">UV
+Mapping</a> and it can get very
+complicated if you have a single texture being wrapped around a 3D model.</p>
+<p>As always, each stage of this is hard enough already, so we'll keep it simple.
+This time out we're going to place a texture onto a &quot;Quad&quot; (two triangles
+oriented to make a quadrilateral). Like before, part of the quad will follow the
+mouse so that we can see it stretch around and even flip backwards when the
+mouse moves &quot;behind&quot; the start of the quad.</p>
+<p>What picture? Well I've drawn a pic of a friendly water pal in MS Paint, just
+for this occasion. Here's a quarter-size sample:</p>
+<p><img src="images/creature-smol.png" alt="creature-smol" /></p>
+<a class="header" href="#making-a-quad" id="making-a-quad"><h1>Making A Quad</h1></a>
+<p>So instead of having a <code>Triangle</code> type, we're going to have a <code>Quad</code> type. What
+makes up a quad? Of course it's four points instead of three.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[derive(Debug, Clone, Copy)]
+pub struct Quad {
+  pub x: f32,
+  pub y: f32,
+  pub w: f32,
+  pub h: f32,
+}
+#}</code></pre></pre>
+<p>So if we have four &quot;real&quot; points, and we want to make two triangles... well we
+need 3 points per triangle... We could just list out some of the points more
+than once (scrub mode) or we could get fancy in how we tell the GPU to do it and
+kick it up to a technique called &quot;Indexed Drawing&quot; (cool mode). The details of
+that will be covered in a moment, right now we need to have a method to turn a
+quad into some vertex data.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+impl Quad {
+  pub fn vertex_attributes(self) -&gt; [f32; 4 * (2 + 3 + 2)] {
+    let x = self.x;
+    let y = self.y;
+    let w = self.w;
+    let h = self.h;
+    #[cfg_attr(rustfmt, rustfmt_skip)]
+    [
+    // X    Y    R    G    B                  U    V
+      x  , y+h, 1.0, 0.0, 0.0, /* red     */ 0.0, 1.0, /* bottom left */
+      x  , y  , 0.0, 1.0, 0.0, /* green   */ 0.0, 0.0, /* top left */
+      x+w, y  , 0.0, 0.0, 1.0, /* blue    */ 1.0, 0.0, /* bottom right */
+      x+w, y+h, 1.0, 0.0, 1.0, /* magenta */ 1.0, 1.0, /* top right */
+    ]
+  }
+}
+#}</code></pre></pre>
+<p>As you can see, we're approaching the limit of being able to specify it all as a
+flat array. In future lessons we'll talk about having a proper Vertex type and
+giving it fields so that it's easier to tell what parts are what and such. For a
+single quad it's probably okay to do it like this.</p>
+<p>So each vertex will have an XY position like before, and an RGB color like
+before, and now we're adding a UV texture coordinate as well. We'll also have to
+change around our pipeline setup to allow for the new vertex attribute.</p>
+<p>Texture positions are always stored as 0.0 to 1.0 within the texture, U goes
+horizontal (like X) and V is vertical (like Y). Within <code>gfx-hal</code>, the (0.0, 0.0)
+position for UV coordinates is the <strong>top left corner</strong> of the image. Even if the
+backend would normally use some other system, <code>gfx-hal</code> does the translations
+necessary so that (0.0, 0.0) is the top left.</p>
+<p>Note that some other graphics systems (mostly OpenGL) put the texture origin at
+the <em>bottom</em> left instead! If you're trying out some shader code samples from
+some other place and your images come out unexpectedly upside down, that's why.
+You can compensate by flipping the image data before you upload it (I'll mention
+that in a moment), or you can flip the computed coordinate before looking up the
+data in the texture by using <code>1.0-V</code> instead of using <code>V</code> directly.</p>
+<a class="header" href="#indexed-drawing" id="indexed-drawing"><h1>Indexed Drawing</h1></a>
+<p>Indexed drawing is a way to save on vertex space by specifying the minimum
+number of vertices in just any order within an array, and then also specifying
+indexes into that array to describe the triangles themselves.</p>
+<p>That might sound silly, at first. We save a little space on the vertex data that
+we didn't specify twice, but then we have to give all the indexes, so are we
+really saving much? Let's check.</p>
+<p>Say we have 28 bytes per vertex (7 floats * 4 bytes each, that's what we have
+right now), and also that indexes are given as <code>u16</code> values:</p>
+<ul>
+<li>If there's a Quad:
+<ul>
+<li>We reduce the vertex count from 6 to 4 (56 bytes saved)</li>
+<li>We need to spend 6 indexes to describe the triangles (12 bytes used)</li>
+<li>Net savings of 44 bytes per quad (56-12)</li>
+</ul>
+</li>
+<li>If there's a Cube:
+<ul>
+<li>We reduce the vertex count from 36 to 8 (784 bytes saved)</li>
+<li>We need to spend 36 indexes to describe the triangles (72 bytes used)</li>
+<li>Net savings of 712 bytes per cube (784-72)</li>
+</ul>
+</li>
+<li>As the model shape gets more complex, causing more triangles to share the same
+vertex, the overall savings <em>improve</em>.</li>
+</ul>
+<p>So, yeah, that's totally sweet.</p>
+<a class="header" href="#making-a-bufferbundle-type" id="making-a-bufferbundle-type"><h2>Making A <code>BufferBundle</code> Type</h2></a>
+<p>First of all, now that we're having more than one buffer, we want to take that
+buffer creation (declare buffer, check requirements, get memory, bind memory)
+and pack it into its own thing. We'll call it a <code>BufferBundle</code>, because that
+seems like a good enough name for a really generic sort of thing that we don't
+even fully know how we'll use in the future.</p>
+<p>The struct for it is very simple. We can even make it generic over the <code>Backend</code>
+trait for maximum angle brackets in our code. (Rust is always better with more
+angle brackets in the types, right?)</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub struct BufferBundle&lt;B: Backend, D: Device&lt;B&gt;&gt; {
+  pub buffer: ManuallyDrop&lt;B::Buffer&gt;,
+  pub requirements: Requirements,
+  pub memory: ManuallyDrop&lt;B::Memory&gt;,
+  pub phantom: PhantomData&lt;D&gt;,
+}
+#}</code></pre></pre>
+<p>We'll make all the fields be <code>pub</code>, because (hot take) that's honestly the
+better default for fields, unless you're trying to maintain some invariants with
+the type. The <code>BufferBundle</code> isn't smart enough to have any invariants.</p>
+<p>So we've got it generic over <code>Backend</code>, and then our methods will be using a
+particular <code>Device</code>, and it'd be slightly insane to try and use a buffer between
+two different device implementations, so we'll throw in a 👻
+<a href="https://doc.rust-lang.org/core/marker/struct.PhantomData.html">PhantomData</a> 👻
+so that things know we had a particular device in mind when we made the buffer.
+Is there anything that PhantomData can't solve? I sure hope not. 👻</p>
+<p>Do we want this type to have any methods? Yeah, obviously, we want to be able to
+make new ones. We'll just cut that code for making the vertex buffer and then
+make it a little more buffer agnostic and reusable.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+impl&lt;B: Backend, D: Device&lt;B&gt;&gt; BufferBundle&lt;B, D&gt; {
+  pub fn new(adapter: &amp;Adapter&lt;B&gt;, device: &amp;D, size: usize, usage: BufferUsage) -&gt; Result&lt;Self, &amp;'static str&gt; {
+    unsafe {
+      let mut buffer = device
+        .create_buffer(size as u64, usage)
+        .map_err(|_| &quot;Couldn't create a buffer!&quot;)?;
+      let requirements = device.get_buffer_requirements(&amp;buffer);
+      let memory_type_id = adapter
+        .physical_device
+        .memory_properties()
+        .memory_types
+        .iter()
+        .enumerate()
+        .find(|&amp;(id, memory_type)| {
+          requirements.type_mask &amp; (1 &lt;&lt; id) != 0 &amp;&amp; memory_type.properties.contains(Properties::CPU_VISIBLE)
+        })
+        .map(|(id, _)| MemoryTypeId(id))
+        .ok_or(&quot;Couldn't find a memory type to support the buffer!&quot;)?;
+      let memory = device
+        .allocate_memory(memory_type_id, requirements.size)
+        .map_err(|_| &quot;Couldn't allocate buffer memory!&quot;)?;
+      device
+        .bind_buffer_memory(&amp;memory, 0, &amp;mut buffer)
+        .map_err(|_| &quot;Couldn't bind the buffer memory!&quot;)?;
+      Ok(Self {
+        buffer: ManuallyDrop::new(buffer),
+        requirements,
+        memory: ManuallyDrop::new(memory),
+        phantom: PhantomData,
+      })
+    }
+  }
+#}</code></pre></pre>
+<p><strong>Note:</strong> In a program with many buffers you wouldn't want each buffer to be its
+own memory allocation, because devices have a limit on the number of allocations
+as well as on the total amount of allocated memory. However, implementing a
+proper memory allocator is obviously way out of scope for right now, so we'll
+just do the beginner thing.</p>
+<p>Also we want to be able to throw them away when we're done. Question: Do we want
+it to be <code>Drop</code>? Mmmm, no. But <code>HalState</code> is <code>Drop</code>, why not this too? Well,
+<code>HalState</code> gets to be <code>Drop</code> because it's holding the <code>Device</code> field that's
+needed to destroy all the other stuff it has. A <code>BufferBundle</code> has a PhantomData
+for a device thing, but it isn't holding an <em>actual</em> <code>Device</code>, so it can't
+perform a <code>Drop</code> on its own. <em>Should</em> it hold an actual device reference? I
+think not. That'd make it really hard to store in our <code>HalState</code> alongside the
+device field. The lifetimes would go crazy. So we'll just make a method to
+<code>manually_drop</code> the type, and then it'll do the thing.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  pub unsafe fn manually_drop(&amp;self, device: &amp;D) {
+    use core::ptr::read;
+    device.destroy_buffer(ManuallyDrop::into_inner(read(&amp;self.buffer)));
+    device.free_memory(ManuallyDrop::into_inner(read(&amp;self.memory)));
+  }
+}
+#}</code></pre></pre>
+<a class="header" href="#adding-bufferbundle-to-halstate" id="adding-bufferbundle-to-halstate"><h2>Adding <code>BufferBundle</code> To <code>HalState</code></h2></a>
+<p>So now <code>HalState</code> wants two fields like this:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  vertices: BufferBundle&lt;back::Backend, back::Device&gt;,
+  indexes: BufferBundle&lt;back::Backend, back::Device&gt;,
+#}</code></pre></pre>
+<p>Lokathor, why did we make BufferBundle be all generic and not have HalState be
+all generic?</p>
+<p>Because I tried that at first and doing the whole <code>HalState</code> generic gave me
+some trouble at the time, so I just gave up on it. Obviously.</p>
+<p>Creating these buffers is pretty easy:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+    const F32_XY_RGB_UV_QUAD: usize = size_of::&lt;f32&gt;() * (2 + 3 + 2) * 4;
+    let vertices = BufferBundle::new(&amp;adapter, &amp;device, F32_XY_RGB_UV_QUAD, BufferUsage::VERTEX)?;
+
+    const U16_QUAD_INDICES: usize = size_of::&lt;u16&gt;() * 2 * 3;
+    let indexes = BufferBundle::new(&amp;adapter, &amp;device, U16_QUAD_INDICES, BufferUsage::INDEX)?;
+#}</code></pre></pre>
+<p>And once we have an index buffer we can fill it up just once as part of our
+<code>HalState</code> startup. Even if our quad changes from frame to frame, the indexes
+don't, so we won't have to re-upload them each frame (the savings don't stop!)</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+    // Write the index data just once.
+    unsafe {
+      let mut data_target = device
+        .acquire_mapping_writer(&amp;indexes.memory, 0..indexes.requirements.size)
+        .map_err(|_| &quot;Failed to acquire an index buffer mapping writer!&quot;)?;
+      const INDEX_DATA: &amp;[u16] = &amp;[0, 1, 2, 2, 3, 0];
+      data_target[..INDEX_DATA.len()].copy_from_slice(&amp;INDEX_DATA);
+      device
+        .release_mapping_writer(data_target)
+        .map_err(|_| &quot;Couldn't release the index buffer mapping writer!&quot;)?;
+    }
+#}</code></pre></pre>
+<p>This is the exact same idea as writing to the vertex buffer, so it should look
+very familiar. Do we want to make a <code>write_stuff</code> method on the <code>BufferBundle</code>
+type and capture this pattern? Hmmmmmm, maybe later. I don't think it'd be hard,
+but it's not really our goal right now.</p>
+<a class="header" href="#performing-indexed-drawing" id="performing-indexed-drawing"><h2>Performing Indexed Drawing</h2></a>
+<p>When we're doing our command buffer encoding we do it just a little different.</p>
+<p>Now we have to bind an index buffer (there's <em>just one</em> index buffer per draw
+call, even if there's more than one vertex buffer being combined)</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+        encoder.bind_index_buffer(IndexBufferView {
+          buffer: &amp;self.indexes.buffer,
+          offset: 0,
+          index_type: IndexType::U16,
+        });
+#}</code></pre></pre>
+<p>And then instead of calling <code>draw</code> with a vertex range, offset, and instance
+range, we call <code>draw_indexed</code> with an index range, offset, and instance range.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+        encoder.draw_indexed(0..6, 0, 0..1);
+#}</code></pre></pre>
+<p>Like I said, it's only <em>slightly</em> different.</p>
+<a class="header" href="#adding-a-vertex-attribute-for-texture-positions" id="adding-a-vertex-attribute-for-texture-positions"><h1>Adding A Vertex Attribute For Texture Positions</h1></a>
+<p>This is just a quick little bit. Since we've got a new vertex attribute, we need
+to update our pipeline to account for it.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      let vertex_buffers: Vec&lt;VertexBufferDesc&gt; = vec![VertexBufferDesc {
+        binding: 0,
+        stride: (size_of::&lt;f32&gt;() * (2 + 3 + 2)) as ElemStride,
+        rate: 0,
+      }];
+      let position_attribute = AttributeDesc {
+        location: 0,
+        binding: 0,
+        element: Element {
+          format: Format::Rg32Float,
+          offset: 0,
+        },
+      };
+      let color_attribute = AttributeDesc {
+        location: 1,
+        binding: 0,
+        element: Element {
+          format: Format::Rgb32Float,
+          offset: (size_of::&lt;f32&gt;() * 2) as ElemOffset,
+        },
+      };
+      let uv_attribute = AttributeDesc {
+        location: 2,
+        binding: 0,
+        element: Element {
+          format: Format::Rg32Float,
+          offset: (size_of::&lt;f32&gt;() * 5) as ElemOffset,
+        },
+      };
+      let attributes: Vec&lt;AttributeDesc&gt; = vec![position_attribute, color_attribute, uv_attribute];
+#}</code></pre></pre>
+<p>Gosh, that's a very basic change. It's almost like <a href="https://docs.rs/glium/0.23.0/glium/macro.implement_vertex.html">a macro could do
+it</a>. Naw, I'm
+sure no one would ever <a href="https://docs.rs/vulkano/0.11.1/vulkano/macro.impl_vertex.html">use a macro for
+that</a>. Never.</p>
+<p>This is another reason why you want to switch to a proper &quot;vertex type&quot; as your
+program grows bigger and bigger. It's not only easier to read, but you can start
+throwing macros at your problems! We'll get there eventually.</p>
+<a class="header" href="#loading-an-image" id="loading-an-image"><h1>Loading An Image</h1></a>
+<p>I'm sorry ahead of time, but this process is a fiddly and long one compared to
+how easy that index buffer thing is.</p>
+<p>What we want is to take a collection of pixel data and get it form our CPU
+memory into GPU memory. However, as much as you might think, &quot;oh that's super
+common, that's gotta be like 1 call right?&quot; No, it's like 11 distinct steps,
+some of which are several calls.</p>
+<p>So, we'll make another type to hold this concept for us. This is very similar to
+the BufferBundle, with some generics and PhantomData and such.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub struct LoadedImage&lt;B: Backend, D: Device&lt;B&gt;&gt; {
+  pub image: ManuallyDrop&lt;B::Image&gt;,
+  pub requirements: Requirements,
+  pub memory: ManuallyDrop&lt;B::Memory&gt;,
+  pub image_view: ManuallyDrop&lt;B::ImageView&gt;,
+  pub sampler: ManuallyDrop&lt;B::Sampler&gt;,
+  pub phantom: PhantomData&lt;D&gt;,
+}
+#}</code></pre></pre>
+<p>And right now we can say that it's got a cleanup method too:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  pub unsafe fn manually_drop(&amp;self, device: &amp;D) {
+    use core::ptr::read;
+    device.destroy_sampler(ManuallyDrop::into_inner(read(&amp;self.sampler)));
+    device.destroy_image_view(ManuallyDrop::into_inner(read(&amp;self.image_view)));
+    device.destroy_image(ManuallyDrop::into_inner(read(&amp;self.image)));
+    device.free_memory(ManuallyDrop::into_inner(read(&amp;self.memory)));
+  }
+#}</code></pre></pre>
+<p>And it's got a load method which is complex enough that we'll talk about it in
+steps.</p>
+<a class="header" href="#method-signature" id="method-signature"><h2>Method Signature</h2></a>
+<p>What will we need? Well, we need and Adapter and Device like we do for a lot of
+these memory things, but we'll also be telling the GPU to do stuff, so we'll
+need a CommandPool and a CommandQueue. They get bound by <code>Capability + Supports&lt;Transfer&gt;</code>, in other words, they have to be pools that support the
+ability to transfer things around. That's actually <em>all</em> possible pools and
+queues (since graphics and compute both also support transfer), but it doesn't
+really hurt to be clear what we're looking for. Lastly we need the image to be
+uploading. We'll use the <a href="https://docs.rs/image">image</a> crate because it's the
+most commonly used one. They support most of the file formats and pixel types
+you'd need. At the time of writing the latest version is <code>0.21</code>.</p>
+<pre><code class="language-toml">[dependencies]
+...
+image = &quot;0.21&quot;
+</code></pre>
+<p>Now we can begin to define how to load an image:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+impl&lt;B: Backend, D: Device&lt;B&gt;&gt; LoadedImage&lt;B, D&gt; {
+  pub fn new&lt;C: Capability + Supports&lt;Transfer&gt;&gt;(
+    adapter: &amp;Adapter&lt;B&gt;, device: &amp;D, command_pool: &amp;mut CommandPool&lt;B, C&gt;,
+    command_queue: &amp;mut CommandQueue&lt;B, C&gt;, img: image::RgbaImage,
+  ) -&gt; Result&lt;Self, &amp;'static str&gt; {
+    unsafe {
+#}</code></pre></pre>
+<a class="header" href="#figure-out-some-memory-stuff" id="figure-out-some-memory-stuff"><h2>Figure Out Some Memory Stuff.</h2></a>
+<p>First, before we actually do any GPU interaction, we need to double check on
+some values we'll be using. See, we're going to make a buffer for this whole
+upload process, as you might guess. However, unlike with vertex data, the
+backend is allowed to be more picky about the memory alignment of image data. We
+have to have the individual values aligned properly (eg: <code>u32</code> aligned to 4
+bytes), but we <em>also</em> have to have the rows of the image aligned to their own
+alignment.</p>
+<p>Some image memory needs a little extra padding between rows to be optimal. The
+Adapter has a field for the physical device, and that has a method to get the
+limits. Those limits include a <code>min_buffer_copy_pitch_alignment</code> field, which is
+a fairly poor name perhaps, but it means how well aligned the entire row of of
+pixels in an image have to be. For example, we might need to align each row into
+a 4 unit wide buffer, so if we have some little picture that's 50x50 we'd need
+to place it into a buffer that's actually 52 pixels wide to match the alignment.</p>
+<p>We take the <code>min_buffer_copy_pitch_alignment</code> and do a little math to basically
+&quot;round up&quot; our starting row size to the next aligned value. This will give us a
+row &quot;pitch&quot; value for the buffer that will always be equal to or greater than
+the image's size in our CPU memory.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      // 0. First we compute some memory related values.
+      let pixel_size = size_of::&lt;image::Rgba&lt;u8&gt;&gt;();
+      let row_size = pixel_size * (img.width() as usize);
+      let limits = adapter.physical_device.limits();
+      let row_alignment_mask = limits.min_buffer_copy_pitch_alignment as u32 - 1;
+      let row_pitch = ((row_size as u32 + row_alignment_mask) &amp; !row_alignment_mask) as usize;
+      debug_assert!(row_pitch as usize &gt;= row_size);
+#}</code></pre></pre>
+<p>Okay, now we're ready to focus on the actual upload process.</p>
+<a class="header" href="#make-a-staging-buffer" id="make-a-staging-buffer"><h2>Make A Staging Buffer</h2></a>
+<p>In the past we've been able to map memory which we can directly write into our
+buffers (the Vertex Buffer and Index Buffer). This is because we've been using
+<code>CPU_VISIBLE</code> memory, which for most Vulkan vendors means the memory being used
+is in CPU RAM, not in VRAM which is on the graphics card. If we used this for an
+image, sampling that image (aka &quot;reading it&quot;) would be very, <em>very</em> slow.
+Instead, what we want to do is make an image that uses a different type of
+memory called <code>DEVICE_LOCAL</code> (that is, &quot;local to the graphics device&quot;). It's RAM
+that's actually on the graphics card itself, much faster for the GPU to use.
+However, being close to the GPU means it's far from us (we're the CPU). It's so
+far that you actually can't even get there from here. We have to make a &quot;staging
+buffer&quot;, copy our image from CPU memory into that, then tell the GPU to copy
+from the staging buffer into the actual image memory. Yes, really.</p>
+<p>For the staging buffer we can use the <code>BufferBundle</code> type, and we want the usage
+to be &quot;transfer source&quot;.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      // 1. make a staging buffer with enough memory for the image, and a
+      //    transfer_src usage
+      let required_bytes = row_pitch * img.height() as usize;
+      let staging_bundle =
+        BufferBundle::new(&amp;adapter, device, required_bytes, BufferUsage::TRANSFER_SRC)?;
+#}</code></pre></pre>
+<a class="header" href="#write-to-the-staging-buffer" id="write-to-the-staging-buffer"><h2>Write To The Staging Buffer</h2></a>
+<p>Now that our staging buffer is created, we can &quot;stage&quot; the data into it.</p>
+<p>Except, remember that alignment issue? <em>Sometimes</em> the buffer will have a pitch
+that's exactly as big as our image's width, and sometimes it will have a bigger
+pitch. So we can't do a straight copy like we've done in the past. We have to do
+a row-wise copy.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      // 2. use mapping writer to put the image data into that buffer
+      let mut writer = device
+        .acquire_mapping_writer::&lt;u8&gt;(&amp;staging_bundle.memory, 0..staging_bundle.requirements.size)
+        .map_err(|_| &quot;Couldn't acquire a mapping writer to the staging buffer!&quot;)?;
+      for y in 0..img.height() as usize {
+        let row = &amp;(*img)[y * row_size..(y + 1) * row_size];
+        let dest_base = y * row_pitch;
+        writer[dest_base..dest_base + row.len()].copy_from_slice(row);
+      }
+      device
+        .release_mapping_writer(writer)
+        .map_err(|_| &quot;Couldn't release the mapping writer to the staging buffer!&quot;)?;
+#}</code></pre></pre>
+<p>See that part where we iterate the picture rows and the writer rows in the
+<em>same</em> direction? If we needed to flip our image data around we'd iterate one of
+them in the <em>opposite</em> direction (doesn't matter which) and then our image would
+get uploaded with a vertical flip applied.</p>
+<a class="header" href="#make-an-image" id="make-an-image"><h2>Make An Image</h2></a>
+<p>Now we make an Image on the Device with
+<a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/device/trait.Device.html#tymethod.create_image">create_image</a>.
+This is just a description of what the image will be like. Like with Buffers, an
+Image doesn't automatically have any memory bound to it.</p>
+<ul>
+<li><code>kind</code> looks like just the dimensionality of the image, but it's <a href="https://www.khronos.org/registry/vulkan/specs/1.1-extensions/man/html/VkImageViewCreateInfo.html">actually
+complex enough to need a huge
+table</a>
+of what's allowed to go with what.</li>
+<li><code>mip_levels</code> is for when you do mip mapping to have more than one level of
+detail for the image. We won't do that yet, so just leave it at 1.</li>
+<li><code>format</code> is the pixel format of the image. This might not match the pixel
+format of the swapchain that the image gets used with, and then the GPU will
+convert around and stuff. Thankfully our formats will probably match here.</li>
+<li><code>tiling</code> affects the memory layout of the image. In this case the image will
+be purely used within the GPU, so we'll pick <code>Optimal</code> and let the GPU be
+happy.</li>
+<li><code>usage</code> is an image usage (which is <em>similar to but not the same as</em> the
+buffer usage flags), and here we want <code>TRANSFER_DST</code> (since it will be the
+destination for our staging buffer transfer) and also <code>SAMPLED</code> (since the
+fragment shader will sample from it).</li>
+<li><code>view_caps</code> is if we want our view into the image to support anything special,
+but we don't need any of that.</li>
+</ul>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      // 3. Make an image with transfer_dst and SAMPLED usage
+      let mut the_image = device
+        .create_image(
+          gfx_hal::image::Kind::D2(img.width(), img.height(), 1, 1),
+          1,
+          Format::Rgba8Srgb,
+          gfx_hal::image::Tiling::Optimal,
+          gfx_hal::image::Usage::TRANSFER_DST | gfx_hal::image::Usage::SAMPLED,
+          gfx_hal::image::ViewCapabilities::empty(),
+        )
+        .map_err(|_| &quot;Couldn't create the image!&quot;)?;
+#}</code></pre></pre>
+<a class="header" href="#allocate-some-image-memory" id="allocate-some-image-memory"><h2>Allocate Some Image Memory</h2></a>
+<p>Next we want to allocate some memory for the image and bind it to the image.
+This works <em>very close</em> to how it works with the <code>BufferBundle</code> type. However,
+remember that instead of memory that's <code>CPU_VISIBLE</code>, we want memory that's
+<code>DEVICE_LOCAL</code>.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      // 4. allocate memory for the image and bind it
+      let requirements = device.get_image_requirements(&amp;the_image);
+      let memory_type_id = adapter
+        .physical_device
+        .memory_properties()
+        .memory_types
+        .iter()
+        .enumerate()
+        .find(|&amp;(id, memory_type)| {
+          // BIG NOTE: THIS IS DEVICE LOCAL NOT CPU VISIBLE
+          requirements.type_mask &amp; (1 &lt;&lt; id) != 0
+            &amp;&amp; memory_type.properties.contains(Properties::DEVICE_LOCAL)
+        })
+        .map(|(id, _)| MemoryTypeId(id))
+        .ok_or(&quot;Couldn't find a memory type to support the image!&quot;)?;
+      let memory = device
+        .allocate_memory(memory_type_id, requirements.size)
+        .map_err(|_| &quot;Couldn't allocate image memory!&quot;)?;
+      device
+        .bind_image_memory(&amp;memory, 0, &amp;mut the_image)
+        .map_err(|_| &quot;Couldn't bind the image memory!&quot;)?;
+#}</code></pre></pre>
+<p>The same note applies here as with the <code>BufferBundle</code>: in a program with many
+textures you'd need to grab a big block of memory and use a sub-allocator to
+pick out actual image memory yourself because there's a limit on total
+allocations among GPU memory. This is fine for now though.</p>
+<a class="header" href="#create-an-imageview-and-sampler" id="create-an-imageview-and-sampler"><h2>Create An <code>ImageView</code> And <code>Sampler</code></h2></a>
+<p>We don't use it immediately, but later on we'll need to have both an <code>ImageView</code>
+and <code>Sampler</code> for our Image, so we'll make them right now and store them in the
+<code>LoadedImage</code> struct. Conceptually, the LoadedImage would just be somewhat
+incomplete without them.</p>
+<p>In <code>gfx-hal</code>, there are basically three &quot;levels&quot; of both image and buffer
+resources. First there's the <code>Memory</code>, which is a handle to a specific piece of
+device memory, which is where the raw data for that resource is stored. Then
+there's the <code>Buffer</code> or <code>Image</code>, which is information about the size, planned
+usage, and any special properties of the resource contained in the backing
+memory. Finally there is the resource view. In this case, that's an <code>ImageView</code>,
+but there are also <code>BufferView</code>s that we just haven't used yet. The view is like
+a window into a resource, it describes how to think of it (the type of data,
+pixel format, etc) and which part of the resource to view. You're even allowed
+to have more than one view into the same resource, if you want.</p>
+<p>On top of the <code>ImageView</code> layer we also want to use what is called a <code>Sampler</code>.
+This is what lets us use the image data within a shader. In a graphics program
+you usually don't want the direct value of a specific pixel in a texture,
+instead you want to get the color of a texture at some <em>relative</em> point,
+probably &quot;between&quot; two pixels. What <em>exactly</em> does that mean? The <code>Sampler</code>
+decides what it means.</p>
+<p>The sampler describes how we want the shader to interpolate between the colors
+of a texture, including how to &quot;zoom&quot; the image to be bigger or smaller if it's
+being stretched across a space that doesn't match the original image size.
+Samplers are created and used in a similar way to other device resources. The
+<a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/image/struct.SamplerInfo.html#method.new">SamplerInfo::new</a>
+method can do the work here, because using defaults for most of the stuff is
+fine.</p>
+<ul>
+<li>We pick a
+<a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/image/enum.Filter.html">Filter</a>, which
+determines how to pick the color that's at a &quot;sub-pixel&quot; location. <code>Nearest</code>
+picks all color from just one pixel, whichever pixel the point would be at if
+you rounded the floating point position into an integer position. This gives
+results that are usually sharp and blocky. There's also <code>Linear</code> which does a
+color blend between the pixels around the fractional location, weighted by how
+far the location is towards each side. So if 2 is green and 3 is white, pixel
+2.9 is 90% white and 10% green. The blend happens in however many dimensions
+the image has, so a 1D image is a linear blend, a 2D image is a &quot;bilinear&quot;
+blend, and so on. This gives results that are smoother looking.</li>
+<li>We also pick a
+<a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/image/enum.WrapMode.html">WrapMode</a>.
+Texture coordinates are in the 0.0 to 1.0 range, and if you access something
+outside of that it's not actually an error like accessing outside a slice
+bound is. Instead, the <code>WrapMode</code> determines how the out of bounds location is
+translated to be back in bounds.</li>
+</ul>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      // 5. create image view and sampler
+      let image_view = device
+        .create_image_view(
+          &amp;the_image,
+          gfx_hal::image::ViewKind::D2,
+          Format::Rgba8Srgb,
+          gfx_hal::format::Swizzle::NO,
+          SubresourceRange {
+            aspects: Aspects::COLOR,
+            levels: 0..1,
+            layers: 0..1,
+          },
+        )
+        .map_err(|_| &quot;Couldn't create the image view!&quot;)?;
+      let sampler = device
+        .create_sampler(gfx_hal::image::SamplerInfo::new(
+          gfx_hal::image::Filter::Nearest,
+          gfx_hal::image::WrapMode::Tile,
+        ))
+        .map_err(|_| &quot;Couldn't create the sampler!&quot;)?;
+#}</code></pre></pre>
+<a class="header" href="#create-a-commandbuffer" id="create-a-commandbuffer"><h2>Create A <code>CommandBuffer</code></h2></a>
+<p>We've done this step before, it's not weird. The biggest difference is that now
+we're making a <code>OneShot</code> command buffer. Those other command buffers that we use
+over and over are <code>MultiShot</code>. They both implement
+<a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/command/trait.Shot.html">Shot</a>. It's
+basically what it sounds like, one can be reused and one can't. At the end of
+the loading process we'll be throwing this shot away
+(<a href="https://www.youtube.com/watch?v=Ic7NqP_YGlg">Hamilton</a> would be so upset),
+that means we'll make a <code>OneShot</code> buffer this time around.</p>
+<p><code>OneShot</code> buffers are actually less restrictive than <code>MultiShot</code> buffers, but
+the graphics driver can sometimes make some optimizations based on the manner in
+which you plan to use the buffer. If you really need to care about it, the exact
+details of what type of buffer to use when, with what video cards, with what
+drivers, it's all one of those &quot;you have to profile it to know for sure&quot;
+problems. We're not trying to push out that much performance yet though.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      // 6. create a command buffer
+      let mut cmd_buffer = command_pool.acquire_command_buffer::&lt;gfx_hal::command::OneShot&gt;();
+      cmd_buffer.begin();
+#}</code></pre></pre>
+<a class="header" href="#first-pipeline-barrier" id="first-pipeline-barrier"><h2>First Pipeline Barrier</h2></a>
+<p>The image memory starts with undefined values (much like memory on the CPU) but
+it <em>also</em> starts with an undefined <em>layout</em>. Which sounds a little weird, but
+it's totally a thing.</p>
+<p>Our first command into the buffer is to transition the image memory into a new
+layout that's the best possible layout for being a transfer destination. What
+<em>exactly</em> that means is up to the GPU, but it knows what to do.</p>
+<p>In addition, we transfer the <code>Access</code> type from none at all to <code>TRANSFER_WRITE</code>,
+which tells the GPU the type of access which we are going to be performing on
+this resource for now. It's important that we transition resources which we want
+to use in specific ways to the proper Layout and Access type, because performing
+operations which are not supported by the Layout/Access that a resource
+currently has isn't just a speed penalty, it's an explicit error and possibly
+even <strong>Undefined Behavior</strong> (oh no!). <code>gfx-hal</code> goes to a lot of trouble to make
+sure that all the backends behave like Vulkan even if they're not Vulkan, so you
+can use the Vulkan spec to know which operations are supported by each
+<a href="https://www.khronos.org/registry/vulkan/specs/1.1-extensions/man/html/VkImageLayout.html">Layout</a>
+and
+<a href="https://www.khronos.org/registry/vulkan/specs/1.1-extensions/man/html/VkAccessFlagBits.html">Access</a>
+type.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      // 7. Use a pipeline barrier to transition the image from empty/undefined
+      //    to TRANSFER_WRITE/TransferDstOptimal
+      let image_barrier = gfx_hal::memory::Barrier::Image {
+        states: (gfx_hal::image::Access::empty(), Layout::Undefined)
+          ..(
+            gfx_hal::image::Access::TRANSFER_WRITE,
+            Layout::TransferDstOptimal,
+          ),
+        target: &amp;the_image,
+        families: None,
+        range: SubresourceRange {
+          aspects: Aspects::COLOR,
+          levels: 0..1,
+          layers: 0..1,
+        },
+      };
+      cmd_buffer.pipeline_barrier(
+        PipelineStage::TOP_OF_PIPE..PipelineStage::TRANSFER,
+        gfx_hal::memory::Dependencies::empty(),
+        &amp;[image_barrier],
+      );
+#}</code></pre></pre>
+<a class="header" href="#do-the-copy" id="do-the-copy"><h2>Do The Copy</h2></a>
+<p>Our next command is to actually do that copy from the staging buffer (in
+<code>CPU_VISIBLE</code> memory) into the image (the <code>DEVICE_LOCAL</code> memory).</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      // 8. perform copy from staging buffer to image
+      cmd_buffer.copy_buffer_to_image(
+        &amp;staging_bundle.buffer,
+        &amp;the_image,
+        Layout::TransferDstOptimal,
+        &amp;[gfx_hal::command::BufferImageCopy {
+          buffer_offset: 0,
+          buffer_width: (row_pitch / pixel_size) as u32,
+          buffer_height: img.height(),
+          image_layers: gfx_hal::image::SubresourceLayers {
+            aspects: Aspects::COLOR,
+            level: 0,
+            layers: 0..1,
+          },
+          image_offset: gfx_hal::image::Offset { x: 0, y: 0, z: 0 },
+          image_extent: gfx_hal::image::Extent {
+            width: img.width(),
+            height: img.height(),
+            depth: 1,
+          },
+        }],
+      );
+#}</code></pre></pre>
+<a class="header" href="#transition-the-image-into-shader-friendly-layout" id="transition-the-image-into-shader-friendly-layout"><h2>Transition The Image Into Shader-Friendly Layout</h2></a>
+<p>Just like there's a layout for being an optimal destination, there's also a
+layout for being an optimal place for a shader to read from, and an access type
+for being read from a shader. We've gotta issue a pipeline barrier for this
+transition too. There are other ways to transition resources which should be
+used instead of pipeline barriers when possible (specifically, between render
+Subpasses), but in this case pipeline barriers are required (as always, &quot;more on
+that in future lessons&quot;).</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      // 9. use pipeline barrier to transition the image to SHADER_READ access/
+      //    ShaderReadOnlyOptimal layout
+      let image_barrier = gfx_hal::memory::Barrier::Image {
+        states: (
+          gfx_hal::image::Access::TRANSFER_WRITE,
+          Layout::TransferDstOptimal,
+        )
+          ..(
+            gfx_hal::image::Access::SHADER_READ,
+            Layout::ShaderReadOnlyOptimal,
+          ),
+        target: &amp;the_image,
+        families: None,
+        range: SubresourceRange {
+          aspects: Aspects::COLOR,
+          levels: 0..1,
+          layers: 0..1,
+        },
+      };
+      cmd_buffer.pipeline_barrier(
+        PipelineStage::TRANSFER..PipelineStage::FRAGMENT_SHADER,
+        gfx_hal::memory::Dependencies::empty(),
+        &amp;[image_barrier],
+      );
+#}</code></pre></pre>
+<a class="header" href="#submit-that-buffer" id="submit-that-buffer"><h2>Submit That Buffer!</h2></a>
+<p>With all our commands written we submit the buffer. Except we don't have a fence
+for the GPU to signal us when the whole thing is done. Well, it's not like we're
+uploading whole images every frame, so we'll just make a temporary fence and
+then destroy it after.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      // 10. Submit the cmd buffer to queue and wait for it
+      cmd_buffer.finish();
+      let upload_fence = device
+        .create_fence(false)
+        .map_err(|_| &quot;Couldn't create an upload fence!&quot;)?;
+      command_queue.submit_nosemaphores(Some(&amp;cmd_buffer), Some(&amp;upload_fence));
+      device
+        .wait_for_fence(&amp;upload_fence, core::u64::MAX)
+        .map_err(|_| &quot;Couldn't wait for the fence!&quot;)?;
+      device.destroy_fence(upload_fence);
+#}</code></pre></pre>
+<a class="header" href="#destroy-the-other-temporary-resources" id="destroy-the-other-temporary-resources"><h2>Destroy The Other Temporary Resources</h2></a>
+<p>We're all done, but we can't forget to clean up that staging buffer, and also
+free that <code>OneShot</code> command buffer.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      // 11. Destroy the staging bundle and one shot buffer now that we're done
+      staging_bundle.manually_drop(device);
+      command_pool.free(Some(cmd_buffer));
+#}</code></pre></pre>
+<a class="header" href="#success" id="success"><h2>Success!</h2></a>
+<p>We've finally uploaded an image!</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      Ok(Self {
+        image: ManuallyDrop::new(the_image),
+        requirements,
+        memory: ManuallyDrop::new(memory),
+        image_view: ManuallyDrop::new(image_view),
+        sampler: ManuallyDrop::new(sampler),
+        phantom: PhantomData,
+      })
+#}</code></pre></pre>
+<a class="header" href="#shading-the-image-onto-the-quad" id="shading-the-image-onto-the-quad"><h1>Shading The Image Onto The Quad</h1></a>
+<p>To actually use this image we've got more work ahead of us. Of course, that dumb
+graphics pipeline of ours has to change yet again to accommodate this new thing.
+So we'll have to make some changes to <code>create_pipeline</code>.</p>
+<a class="header" href="#descriptorsetlayout" id="descriptorsetlayout"><h2>DescriptorSetLayout</h2></a>
+<p>First we need a <code>DescriptorSetLayout</code>, which is a backend specific definition of
+the <em>layout</em> of the resources in the graphics pipeline process. Later we'll bind
+those as <code>Descriptors</code>, which we can access in the shader.</p>
+<p>To be clear: we are not yet binding the actual resources which we want to use,
+only describing the kind and place in which those resources will have to go. As
+you'll see later, as long as we follow this layout, we can bind multiple
+different resources into the same slots. We need a <code>SampledImage</code> and a
+<code>Sampler</code>. Like with other shader stuff, the <code>binding</code> value here has to match
+the number that the GLSL code will use.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      // 1. you make a DescriptorSetLayout which is the layout of one descriptor
+      //    set
+      let descriptor_set_layouts: Vec&lt;&lt;back::Backend as Backend&gt;::DescriptorSetLayout&gt; =
+        vec![unsafe {
+          device
+            .create_descriptor_set_layout(
+              &amp;[
+                DescriptorSetLayoutBinding {
+                  binding: 0,
+                  ty: gfx_hal::pso::DescriptorType::SampledImage,
+                  count: 1,
+                  stage_flags: ShaderStageFlags::FRAGMENT,
+                  immutable_samplers: false,
+                },
+                DescriptorSetLayoutBinding {
+                  binding: 1,
+                  ty: gfx_hal::pso::DescriptorType::Sampler,
+                  count: 1,
+                  stage_flags: ShaderStageFlags::FRAGMENT,
+                  immutable_samplers: false,
+                },
+              ],
+              &amp;[],
+            )
+            .map_err(|_| &quot;Couldn't make a DescriptorSetLayout&quot;)?
+        }];
+#}</code></pre></pre>
+<a class="header" href="#descriptorpool" id="descriptorpool"><h2>DescriptorPool</h2></a>
+<p>Next we need a <a href="DescriptorPool">DescriptorPool</a>. This comes from our <code>Device</code>,
+and allows us to actually allocate some <code>Descriptor</code> and <code>DescriptorSet</code> values.
+Unlike with the CommandPool, we have to decide how much of each kind of
+descriptor, as well as how many sets, we'll <em>ever</em> allocate out of this thing
+ahead of time.</p>
+<p>The number of Descriptors is shared between all descriptor sets. We only want
+one SampledImage and one Sampler, both in a single set.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      // 2. you create a descriptor pool, and when making that descriptor pool
+      //    you specify how many sets you want to be able to allocate from the
+      //    pool, as well as the maximum number of each kind of descriptor you
+      //    want to be able to allocate from that pool, total, for all sets.
+      let mut descriptor_pool = unsafe {
+        device
+          .create_descriptor_pool(
+            1, // sets
+            &amp;[
+              gfx_hal::pso::DescriptorRangeDesc {
+                ty: gfx_hal::pso::DescriptorType::SampledImage,
+                count: 1,
+              },
+              gfx_hal::pso::DescriptorRangeDesc {
+                ty: gfx_hal::pso::DescriptorType::Sampler,
+                count: 1,
+              },
+            ],
+          )
+          .map_err(|_| &quot;Couldn't create a descriptor pool!&quot;)?
+      };
+#}</code></pre></pre>
+<p>Technically you could do either steps 1 or 2 first, as long as they're both done
+before step 3.</p>
+<a class="header" href="#allocate-a-descriptorset" id="allocate-a-descriptorset"><h2>Allocate A DescriptorSet</h2></a>
+<p>With a layout and a pool, we're ready to actually allocate a <code>DescriptorSet</code>. A
+DescriptorSet is a set of descriptors in some specific layout. When it's first
+created, there <em>still</em> aren't actual Descriptors written into the set yet, so
+that's the next thing we'll have to do.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      // 3. you allocate said descriptor set from the pool you made earlier
+      let descriptor_set = unsafe {
+        descriptor_pool
+          .allocate_set(&amp;descriptor_set_layouts[0])
+          .map_err(|_| &quot;Couldn't make a Descriptor Set!&quot;)?
+      };
+#}</code></pre></pre>
+<a class="header" href="#create-the-descriptors-you-want-to-write" id="create-the-descriptors-you-want-to-write"><h2>Create The Descriptors You Want To Write</h2></a>
+<p>At this point you'd make the actual descriptors you'd want to write. For us
+that's the ImageView and the Sampler that are part of our <code>LoadedImage</code>. So, in
+the <code>HalState</code> startup we'll load up the image after we call <code>create_pipeline</code>.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+    // 4. You create the actual descriptors which you want to write into the
+    //    allocated descriptor set (in this case an image and a sampler)
+    let texture = LoadedImage::new(
+      &amp;adapter,
+      &amp;device,
+      &amp;mut command_pool,
+      &amp;mut queue_group.queues[0],
+      image::load_from_memory(CREATURE_BYTES)
+        .expect(&quot;Binary corrupted!&quot;)
+        .to_rgba(),
+    )?;
+#}</code></pre></pre>
+<p>This could technically be either before or after the call to <code>create_pipeline</code>
+(since neither depends on the other), but since it's &quot;step 4&quot; in this process,
+and <code>create_pipeline</code> had steps 1 through 3, we'll put it after
+<code>create_pipeline</code>.</p>
+<a class="header" href="#write-the-descriptors-into-the-descriptorset" id="write-the-descriptors-into-the-descriptorset"><h2>Write The Descriptors Into The DescriptorSet</h2></a>
+<p>Once all the resources which will be bound as <code>Descriptors</code> and the
+<code>DescriptorSet</code> exist at the same time (after <code>create_pipeline</code> and after we
+have our <code>LoadedImage</code>), we can write the one into the other. This binds the
+specific ImageView (being used as a SampledImage descriptor) and Sampler (being
+used as a Sampler descriptor) to that specific DescriptorSet.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+    // 5. You write the descriptors into the descriptor set using
+    //    write_descriptor_sets which you pass a set of DescriptorSetWrites
+    //    which each write in one or more descriptors to the set
+    unsafe {
+      device.write_descriptor_sets(vec![
+        gfx_hal::pso::DescriptorSetWrite {
+          set: &amp;descriptor_set,
+          binding: 0,
+          array_offset: 0,
+          descriptors: Some(gfx_hal::pso::Descriptor::Image(
+            texture.image_view.deref(),
+            Layout::ShaderReadOnlyOptimal
+          )),
+        },
+        gfx_hal::pso::DescriptorSetWrite {
+          set: &amp;descriptor_set,
+          binding: 1,
+          array_offset: 0,
+          descriptors: Some(gfx_hal::pso::Descriptor::Sampler(texture.sampler.deref())),
+        },
+      ]);
+    }
+#}</code></pre></pre>
+<a class="header" href="#bind-the-descriptor-set-during-render-pass-encoding" id="bind-the-descriptor-set-during-render-pass-encoding"><h2>Bind The Descriptor Set During Render Pass Encoding</h2></a>
+<p>Lastly, when we're doing all of our binding for the render pass, we have to bind
+this stuff too. If you had multiple images which you wanted to bind into the
+same shader program at different times, you'd create multiple DescriptorSets and
+then write the different resources into those different DescriptorSets and then
+finally bind the correct set before each draw call. You can also bind more than
+one set into a single draw call, but the uses for that are a bit more
+complicated (&quot;for another lesson&quot;).</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+        // 6. You actually bind the descriptor set in the command buffer before
+        //    the draw call using bind_graphics_descriptor_sets
+        encoder.bind_graphics_descriptor_sets(
+          &amp;self.pipeline_layout,
+          0,
+          Some(self.descriptor_set.deref()),
+          &amp;[],
+        );
+#}</code></pre></pre>
+<p>Note 1: We've got it a in few places, but that <code>deref</code> call there is to make the
+<code>Deref</code> trait on the <code>ManuallyDrop</code> wrapper trigger, because just using <code>&amp;</code>
+doesn't do it. probably because <code>bind_graphics_descriptor_sets</code> is so generic
+that <code>rustc</code> actually gets confused about what we're even trying to say.</p>
+<p>Note 2: here we're using <code>Some(thing)</code> instead of making another <code>ArrayVec</code> of
+length 1. I think we already did it above in this lesson too. It's ultimately
+the same effect (since the generic here is for <code>IntoIterator</code>), and arguably
+easier to use this way. However, I wanted to make sure that you knew how to do
+the <code>ArrayVec</code> version, so it got shown off first. Using <code>Some(thing)</code> is quick
+and easy, but it locks you at one element instead of allowing for as many
+elements as you want with the <code>ArrayVec</code> (by just change the length value). Of
+course, if you don't know how many things you'll be passing at compile time (for
+whatever reason) you can also use a normal <code>Vec</code> (we're trying to avoid
+allocations as much as we can though!).</p>
+<a class="header" href="#update-the-vertex-shader" id="update-the-vertex-shader"><h2>Update The Vertex Shader</h2></a>
+<p>We adjust the vertex shader slightly so that it passes the UV coordinates on through.</p>
+<pre><code class="language-glsl">#version 450
+layout (location = 0) in vec2 position;
+layout (location = 1) in vec3 color;
+layout (location = 2) in vec2 vert_uv;
+
+layout (location = 0) out gl_PerVertex {
+  vec4 gl_Position;
+};
+layout (location = 1) out vec3 frag_color;
+layout (location = 2) out vec2 frag_uv;
+
+void main()
+{
+  gl_Position = vec4(position, 0.0, 1.0);
+  frag_color = color;
+  frag_uv = vert_uv;
+}
+</code></pre>
+<a class="header" href="#update-the-fragment-shader" id="update-the-fragment-shader"><h2>Update The Fragment Shader</h2></a>
+<p>LAST STEP!</p>
+<p>In the fragment shader we need to declare that we'll be getting this image data:</p>
+<pre><code class="language-glsl">layout(set = 0, binding = 0) uniform texture2D tex;
+layout(set = 0, binding = 1) uniform sampler samp;
+</code></pre>
+<p>Notice the <code>binding</code>s here match up with what we put all the way back in our
+<code>DescriptorSetLayout</code>. The <code>set</code> value is matched up with the position of the
+<code>DescriptorSet</code> within the <code>IntoIterator</code> that we passed to
+<code>bind_graphics_descriptor_sets</code>.</p>
+<p>Then in <code>main</code> we form a <code>sampler2D</code> from the <code>texture2D</code> and <code>sampler</code> put
+together. This lets us call the
+<a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/texture.xhtml">texture</a>
+function, passing the <code>sampler2D</code> as well as the UV coordinates of that
+fragment. That finally ets us a RGBA color out of the texture data.</p>
+<p>We could output this directly, but just for fun (and to show off a little more
+of what a fragment shader can do) we'll use the time value to shift between the
+texture data and the rainbow color data. This is a snap to do with the
+<a href="https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/mix.xhtml">mix</a>
+function. It takes two colors, and a portion (from 0.0 to 1.0) for how much the
+<em>second</em> color should determine the output (it's just a linear interpolation, if
+you remember that from the sampler stuff above). We'll cover this in more detail
+later on. For now it's okay to just know that it works.</p>
+<pre><code class="language-glsl">#version 450
+layout (push_constant) uniform PushConsts {
+  float time;
+} push;
+
+layout(set = 0, binding = 0) uniform texture2D tex;
+layout(set = 0, binding = 1) uniform sampler samp;
+
+layout (location = 1) in vec3 frag_color;
+layout (location = 2) in vec2 frag_uv;
+
+layout (location = 0) out vec4 color;
+
+void main()
+{
+  float time01 = -0.9 * abs(sin(push.time * 0.7)) + 0.9;
+  vec4 tex_color = texture(sampler2D(tex, samp), frag_uv);
+  color = mix(tex_color, vec4(frag_color, 1.0), time01);
+}
+</code></pre>
+<p>And we're finally through!</p>
+<p><img src="images/textures-complete.png" alt="textures-complete" /></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="05_shaders.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="06_01_generalizing_hal_state.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="05_shaders.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="06_01_generalizing_hal_state.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>

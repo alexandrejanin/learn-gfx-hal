@@ -1,0 +1,524 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Depth Buffer - learn-gfx-hal</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="01_introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><a href="02_opening_a_window.html"><strong aria-hidden="true">2.</strong> Opening A Window</a></li><li><a href="03_clear_the_window.html"><strong aria-hidden="true">3.</strong> Clear The Window</a></li><li><a href="04_triangle_intro.html"><strong aria-hidden="true">4.</strong> Triangle Intro</a></li><li><a href="05_shaders.html"><strong aria-hidden="true">5.</strong> Shaders</a></li><li><a href="06_textures.html"><strong aria-hidden="true">6.</strong> Textures</a></li><li><ol class="section"><li><a href="06_01_generalizing_hal_state.html"><strong aria-hidden="true">6.1.</strong> Generalizing HalState</a></li></ol></li><li><a href="07_coordinates.html"><strong aria-hidden="true">7.</strong> Coordinates</a></li><li><a href="08_camera.html"><strong aria-hidden="true">8.</strong> Camera</a></li><li><a href="09_depth_buffer.html" class="active"><strong aria-hidden="true">9.</strong> Depth Buffer</a></li><li><a href="10_instanced_drawing.html"><strong aria-hidden="true">10.</strong> Instanced Drawing</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">learn-gfx-hal</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="#depth-buffer" id="depth-buffer"><h1>Depth Buffer</h1></a>
+<p>Alright well we're getting close to having all the basics covered but our cubes
+are all wrong when they're different distances. Later cubes overdraw earlier
+cubes even if they're farther away. That's not how things should go!</p>
+<p>We have to activate a part of the drawing pipeline called the &quot;Depth Buffer&quot;.
+It's basically what it sounds like. In addition to recording one color value per
+fragment, there's also now going to be a depth value per fragment. If any later
+primitive (from the same draw call or a future draw call) <em>would</em> write to a
+fragment's color, the depth buffer is checked. If it &quot;passes&quot; the check (we'll
+see what that means in a moment) then the new depth value is recorded and the
+new color value is recorded.</p>
+<a class="header" href="#a-depthimage-type" id="a-depthimage-type"><h1>A <code>DepthImage</code> Type</h1></a>
+<p>As you might imagine by now, if we're doing stuff with memory we gotta get that
+memory from somewhere. The color image got allocated for us &quot;automatically&quot; as
+part of us getting a backbuffer, but we don't get depth images for free.</p>
+<p>By now we're a little more comfortable with things than we were at the start so
+let jump straight to having all the parts of this bundled together. This is
+<em>really close</em> to how <code>LoadedImage</code> works, but no Sampler.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+/// Parts for a depth buffer image
+pub struct DepthImage&lt;B: Backend, D: Device&lt;B&gt;&gt; {
+  pub image: ManuallyDrop&lt;B::Image&gt;,
+  pub requirements: Requirements,
+  pub memory: ManuallyDrop&lt;B::Memory&gt;,
+  pub image_view: ManuallyDrop&lt;B::ImageView&gt;,
+  pub phantom: PhantomData&lt;D&gt;,
+}
+#}</code></pre></pre>
+<p>And we have a method to make one of these things as well as a method to clean it
+up. There's not much that's surprising here. We pretty much use the same code as
+before and any place we see &quot;color&quot; we replace it with &quot;depth&quot; instead. If we
+had the time we could possibly make some sort of complicated thing where there's
+just one AbstractImage that we use most of the time and then a LoadedImage holds
+an AbstractImage plus a Sampler and all that... but I honestly just don't think
+it's worth the effort to bother with all that layering complication.</p>
+<p>Note: in the following code the <code>DepthImage</code> uses device local memory (since the
+memory is used very actively in the graphics pipeline process), but in other
+situations you might care to try and find some memory that's both device local
+and <em>also</em> cpu visible (depending on exactly how you use the <code>DepthImage</code>). Most
+graphics cards have at least some memory like that. As with other things in
+<code>gfx-hal</code>, it always comes down to customizing every part of what's going on
+based on exactly what you're trying to achieve.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+impl&lt;B: Backend, D: Device&lt;B&gt;&gt; DepthImage&lt;B, D&gt; {
+  pub fn new(adapter: &amp;Adapter&lt;B&gt;, device: &amp;D, extent: Extent2D) -&gt; Result&lt;Self, &amp;'static str&gt; {
+    unsafe {
+      let mut the_image = device
+        .create_image(
+          gfx_hal::image::Kind::D2(extent.width, extent.height, 1, 1),
+          1,
+          Format::D32Float,
+          gfx_hal::image::Tiling::Optimal,
+          gfx_hal::image::Usage::DEPTH_STENCIL_ATTACHMENT,
+          gfx_hal::image::ViewCapabilities::empty(),
+        )
+        .map_err(|_| &quot;Couldn't crate the image!&quot;)?;
+      let requirements = device.get_image_requirements(&amp;the_image);
+      let memory_type_id = adapter
+        .physical_device
+        .memory_properties()
+        .memory_types
+        .iter()
+        .enumerate()
+        .find(|&amp;(id, memory_type)| {
+          // BIG NOTE: THIS IS DEVICE LOCAL NOT CPU VISIBLE
+          requirements.type_mask &amp; (1 &lt;&lt; id) != 0
+            &amp;&amp; memory_type.properties.contains(Properties::DEVICE_LOCAL)
+        })
+        .map(|(id, _)| MemoryTypeId(id))
+        .ok_or(&quot;Couldn't find a memory type to support the image!&quot;)?;
+      let memory = device
+        .allocate_memory(memory_type_id, requirements.size)
+        .map_err(|_| &quot;Couldn't allocate image memory!&quot;)?;
+      device
+        .bind_image_memory(&amp;memory, 0, &amp;mut the_image)
+        .map_err(|_| &quot;Couldn't bind the image memory!&quot;)?;
+      let image_view = device
+        .create_image_view(
+          &amp;the_image,
+          gfx_hal::image::ViewKind::D2,
+          Format::D32Float,
+          gfx_hal::format::Swizzle::NO,
+          SubresourceRange {
+            aspects: Aspects::DEPTH,
+            levels: 0..1,
+            layers: 0..1,
+          },
+        )
+        .map_err(|_| &quot;Couldn't create the image view!&quot;)?;
+      Ok(Self {
+        image: ManuallyDrop::new(the_image),
+        requirements,
+        memory: ManuallyDrop::new(memory),
+        image_view: ManuallyDrop::new(image_view),
+        phantom: PhantomData,
+      })
+    }
+  }
+
+  pub unsafe fn manually_drop(&amp;self, device: &amp;D) {
+    use core::ptr::read;
+    device.destroy_image_view(ManuallyDrop::into_inner(read(&amp;self.image_view)));
+    device.destroy_image(ManuallyDrop::into_inner(read(&amp;self.image)));
+    device.free_memory(ManuallyDrop::into_inner(read(&amp;self.memory)));
+  }
+}
+#}</code></pre></pre>
+<a class="header" href="#update-the-render-pass" id="update-the-render-pass"><h1>Update the render pass</h1></a>
+<p>We're adding a bit to the render pass creation.</p>
+<a class="header" href="#new-depth-attachment" id="new-depth-attachment"><h2>New Depth Attachment</h2></a>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      let depth_attachment = Attachment {
+        format: Some(Format::D32Float),
+        samples: 1,
+        ops: AttachmentOps {
+          load: AttachmentLoadOp::Clear,
+          store: AttachmentStoreOp::DontCare,
+        },
+        stencil_ops: AttachmentOps::DONT_CARE,
+        layouts: Layout::Undefined..Layout::DepthStencilAttachmentOptimal,
+      };
+#}</code></pre></pre>
+<p>This is <em>similar to</em> the color attachment.</p>
+<ul>
+<li>With the depth attachment we don't use the format that the GPU and surface
+negotiated, that's just for the color data. Instead we use the format that we
+specify during the <code>DepthImage</code> creation.</li>
+<li><code>ops.store</code> can be changed to <code>DontCare</code> because we don't care what happens
+after the full render pass completes. You <em>could</em> store it and check it later,
+and there are good uses for that, but we really don't care right now.</li>
+<li>Instead of our <code>layouts</code> going from <code>Undefined</code> to <code>Present</code> it goes to
+<code>DepthStencilAttachmentOptimal</code>, which should sound familiar by now. That's
+the depth version of the <code>ColorAttachmentOptimal</code> we're already using.</li>
+</ul>
+<a class="header" href="#update-subpassdesc" id="update-subpassdesc"><h2>Update SubpassDesc</h2></a>
+<p>We add a new ID and layout to the <code>subpass</code></p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      let subpass = SubpassDesc {
+        colors: &amp;[(0, Layout::ColorAttachmentOptimal)],
+        depth_stencil: Some(&amp;(1, Layout::DepthStencilAttachmentOptimal)),
+        inputs: &amp;[],
+        resolves: &amp;[],
+        preserves: &amp;[],
+      };
+#}</code></pre></pre>
+<a class="header" href="#add-subpass-dependencies" id="add-subpass-dependencies"><h2>Add Subpass Dependencies</h2></a>
+<p>Now we're going to specify two
+<a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/pass/struct.SubpassDependency.html">SubpassDependency</a>
+values. One for &quot;in&quot; and one for &quot;out&quot;. In our case they're basically a mirror
+of each other, but if you had more passes then it'd get more intricate. Right
+now our data just flows from the &quot;External&quot; world, into our lone subpass, and
+then right back out into the External world.</p>
+<p>We didn't have to talk about this stuff before because there <em>is</em> an <a href="https://www.reddit.com/r/vulkan/comments/8arvcj/a_question_about_subpass_dependencies/dx139hr/">implicit
+subpass
+dependency</a>
+that happens if you don't specify one yourself. However, it's a little
+conservative about when the pipeline can start and stop (as default definitions
+often should be), and it doesn't enable a neat flag that we want.</p>
+<p>There's a flag you can enable for <a href="http://vulkan-spec-chunked.ahcox.com/ch25s04.html">Early Fragment Test
+Mode</a>. This does the depth
+test (and some other tests) <em>before</em> the fragment shader runs instead of after.
+This can potentially be quite a boost if you have a complicated fragment shader
+that the depth buffer or other test will just cull anyway. However, there are
+edge cases where you might not want it, so be sure to read that page for the
+specifics. Our fragment shader isn't super fancy, so we'll just do the early
+tests. Not that the speed boost really matters either since we're also well
+under 16ms per frame either way, but it's the spirit of the thing.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      let in_dependency = SubpassDependency {
+        passes: SubpassRef::External..SubpassRef::Pass(0),
+        stages: PipelineStage::COLOR_ATTACHMENT_OUTPUT
+          ..PipelineStage::COLOR_ATTACHMENT_OUTPUT | PipelineStage::EARLY_FRAGMENT_TESTS,
+        accesses: ImageAccess::empty()
+          ..(ImageAccess::COLOR_ATTACHMENT_READ
+            | ImageAccess::COLOR_ATTACHMENT_WRITE
+            | ImageAccess::DEPTH_STENCIL_ATTACHMENT_READ
+            | ImageAccess::DEPTH_STENCIL_ATTACHMENT_WRITE),
+      };
+      let out_dependency = SubpassDependency {
+        passes: SubpassRef::Pass(0)..SubpassRef::External,
+        stages: PipelineStage::COLOR_ATTACHMENT_OUTPUT | PipelineStage::EARLY_FRAGMENT_TESTS
+          ..PipelineStage::COLOR_ATTACHMENT_OUTPUT,
+        accesses: (ImageAccess::COLOR_ATTACHMENT_READ
+          | ImageAccess::COLOR_ATTACHMENT_WRITE
+          | ImageAccess::DEPTH_STENCIL_ATTACHMENT_READ
+          | ImageAccess::DEPTH_STENCIL_ATTACHMENT_WRITE)..ImageAccess::empty(),
+      };
+#}</code></pre></pre>
+<a class="header" href="#update-create_render_pass" id="update-create_render_pass"><h2>Update <code>create_render_pass</code></h2></a>
+<p>We just change the call to incorporate the new values:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      unsafe {
+        device
+          .create_render_pass(
+            &amp;[color_attachment, depth_attachment],
+            &amp;[subpass],
+            &amp;[in_dependency, out_dependency],
+          )
+          .map_err(|_| &quot;Couldn't create a render pass!&quot;)?
+      }
+#}</code></pre></pre>
+<a class="header" href="#update-the-depth_stencil" id="update-the-depth_stencil"><h2>Update the <code>depth_stencil</code></h2></a>
+<p>Where we have our descriptor sets and all that we need a new <code>depth_stencil</code>
+definition in the <code>create_pipeline</code> function:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      let depth_stencil = DepthStencilDesc {
+        depth: DepthTest::On {
+          fun: gfx_hal::pso::Comparison::LessEqual,
+          write: true,
+        },
+        depth_bounds: false,
+        stencil: StencilTest::Off,
+      };
+#}</code></pre></pre>
+<p>Remember how I said that the depth buffer uses &quot;a test&quot;? Well we get limited
+control over what test operation to use. In this case, we're saying that if the
+new fragment's depth value is less than or equal to the old depth value (aka, if
+the new fragment is closer or as close as the previous one) we write the new
+fragment's data into the depth image and color image.</p>
+<a class="header" href="#update-the-drawing" id="update-the-drawing"><h2>Update the drawing</h2></a>
+<p>The <code>draw_clear_frame</code> method doesn't need a change. Since there's nothing that
+really gets drawn we don't even have to specify a clear depth. However,
+<code>draw_cubes_frame</code> has some stuff to draw so we need to give it a clear depth
+value as well as a clear color value.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      const QUAD_CLEAR: [ClearValue; 2] = [
+        ClearValue::Color(ClearColor::Float([0.1, 0.2, 0.3, 1.0])),
+        ClearValue::DepthStencil(ClearDepthStencil(1.0, 0)),
+      ];
+#}</code></pre></pre>
+<p>And, whoops, I guess that should be renamed to <code>CUBE_CLEAR</code> now.</p>
+<a class="header" href="#update-halstate-itself" id="update-halstate-itself"><h2>Update <code>HalState</code> itself</h2></a>
+<p>Finally, we need to add some depth images to our <code>HalState</code></p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  depth_images: Vec&lt;DepthImage&lt;back::Backend, back::Device&gt;&gt;,
+#}</code></pre></pre>
+<p>And then we adjust how we make our Framebuffer values. We already have the color
+image views (which are views into the backbuffer images), but we also need to
+incorporate the depth image views as well.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+    // Create The ImageViews
+    let (image_views, depth_images, framebuffers) = match backbuffer {
+      Backbuffer::Images(images) =&gt; {
+        let image_views = images
+          .into_iter()
+          .map(|image| unsafe {
+            device
+              .create_image_view(
+                &amp;image,
+                ViewKind::D2,
+                format,
+                Swizzle::NO,
+                SubresourceRange {
+                  aspects: Aspects::COLOR,
+                  levels: 0..1,
+                  layers: 0..1,
+                },
+              )
+              .map_err(|_| &quot;Couldn't create the image_view for the image!&quot;)
+          })
+          .collect::&lt;Result&lt;Vec&lt;_&gt;, &amp;str&gt;&gt;()?;
+        let depth_images = image_views
+          .iter()
+          .map(|_| DepthImage::new(&amp;adapter, &amp;device, extent))
+          .collect::&lt;Result&lt;Vec&lt;_&gt;, &amp;str&gt;&gt;()?;
+        let image_extent = gfx_hal::image::Extent {
+          width: extent.width as _,
+          height: extent.height as _,
+          depth: 1,
+        };
+        let framebuffers = image_views
+          .iter()
+          .zip(depth_images.iter())
+          .map(|(view, depth_image)| unsafe {
+            let attachments: ArrayVec&lt;[_; 2]&gt; = [view, &amp;depth_image.image_view].into();
+            device
+              .create_framebuffer(&amp;render_pass, attachments, image_extent)
+              .map_err(|_| &quot;Couldn't crate the framebuffer!&quot;)
+          })
+          .collect::&lt;Result&lt;Vec&lt;_&gt;, &amp;str&gt;&gt;()?;
+        (image_views, depth_images, framebuffers)
+      }
+      Backbuffer::Framebuffer(_) =&gt; unimplemented!(&quot;Can't handle framebuffer backbuffer!&quot;),
+    };
+#}</code></pre></pre>
+<p>And finally, in <code>Drop</code> for <code>HalState</code> we have to clean up our <code>DepthImage</code>
+values the same as we clean up the other stuff in each vec.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      for depth_image in self.depth_images.drain(..) {
+        depth_image.manually_drop(&amp;self.device);
+      }
+#}</code></pre></pre>
+<a class="header" href="#done" id="done"><h1>Done!</h1></a>
+<p>We're already done! That was the whole thing! One of the shortest lessons yet,
+but quite useful to be able to do.</p>
+<p><img src="images/depth-buffer-complete.png" alt="depth-buffer-complete" /></p>
+<p>As always, this example's code can be viewed in the
+<a href="https://github.com/Lokathor/learn-gfx-hal/tree/master/examples">examples</a>
+directory.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="08_camera.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="10_instanced_drawing.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="08_camera.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="10_instanced_drawing.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>

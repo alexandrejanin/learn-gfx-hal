@@ -1,0 +1,1078 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Triangle Intro - learn-gfx-hal</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="01_introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><a href="02_opening_a_window.html"><strong aria-hidden="true">2.</strong> Opening A Window</a></li><li><a href="03_clear_the_window.html"><strong aria-hidden="true">3.</strong> Clear The Window</a></li><li><a href="04_triangle_intro.html" class="active"><strong aria-hidden="true">4.</strong> Triangle Intro</a></li><li><a href="05_shaders.html"><strong aria-hidden="true">5.</strong> Shaders</a></li><li><a href="06_textures.html"><strong aria-hidden="true">6.</strong> Textures</a></li><li><ol class="section"><li><a href="06_01_generalizing_hal_state.html"><strong aria-hidden="true">6.1.</strong> Generalizing HalState</a></li></ol></li><li><a href="07_coordinates.html"><strong aria-hidden="true">7.</strong> Coordinates</a></li><li><a href="08_camera.html"><strong aria-hidden="true">8.</strong> Camera</a></li><li><a href="09_depth_buffer.html"><strong aria-hidden="true">9.</strong> Depth Buffer</a></li><li><a href="10_instanced_drawing.html"><strong aria-hidden="true">10.</strong> Instanced Drawing</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">learn-gfx-hal</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="#triangle-intro" id="triangle-intro"><h1>Triangle Intro</h1></a>
+<p>Hey, you're back.</p>
+<p>This lesson builds upon the last one. Before we could draw a clear frame, now
+we'll add the ability to draw a frame with a single triangle in it.</p>
+<a class="header" href="#usage-code" id="usage-code"><h2>Usage Code</h2></a>
+<p>Once again, even baby steps in functionality will demand pages and pages of work
+to get arranged properly.</p>
+<p>What we're going to write in this lesson is a single public method so that we
+can draw a single triangle as a displayed frame. For now we'll stick to just
+<em>one</em> triangle (three points), and even then, only a 2D triangle of <code>(x,y)</code>
+points.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+#[derive(Debug, Clone, Copy)]
+pub struct Triangle {
+  pub points: [[f32; 2]; 3],
+}
+impl Triangle {
+  pub fn points_flat(self) -&gt; [f32; 6] {
+    let [[a, b], [c, d], [e, f]] = self.points;
+    [a, b, c, d, e, f]
+  }
+}
+#}</code></pre></pre>
+<p>Why only 2D? Unfortunately, without the help of camera perspective, lightning,
+shading, and other effects like that, 3D things just don't show up very well on
+a 2D screen. Instead of looking like a normal triangle at an angle, it just
+looks like a slightly differently shaped triangle, but still totally flat. So
+when we finally transmit the triangle to the GPU we'll simply give all three
+points an identical <code>z</code> coordinate for now.</p>
+<p>To have some sort of confirmation of input and output like before we'll have one
+of the triangle points follow the user's mouse movements. Nothing fancy, just a
+way to see that we're continually  drawing a new thing each time. Actually
+passing in the triangle to draw is basically identical to the clear color
+function:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+impl HalState {
+  pub fn draw_triangle_frame(&amp;mut self, triangle: Triangle) -&gt; Result&lt;(), &amp;'static str&gt; {
+    unimplemented!()
+  }
+}
+#}</code></pre></pre>
+<p>The ability to draw <em>exactly one</em> triangle isn't very useful on its own. What I
+mean is that we could potentially use the <code>draw_clear_frame</code> method in the
+future even in a &quot;complete program&quot;. We could use it during a brief loading
+screen or something. However, <code>draw_triangle_frame</code> doesn't really have a good
+shelf life. In a complete program we'd want to have a way to specify an entire
+scene of models, each composed of many triangles. In fact, if properly
+supporting <code>draw_triangle_frame</code> in future lessons gives us any trouble at all,
+we'll just delete it instead. It's seriously that impractical.</p>
+<p>Why add a thing only to then take it away? Because demanding of ourselves to
+draw a single triangle, of any quality, forces us to put in to place many more
+parts of our overall &quot;rendering pipeline&quot;. The rendering pipeline is what's
+<em>really</em> here to stay. A <strong>complete</strong> rendering pipeline with all the bells and
+whistles is <em>even more complex</em> than a complete Swapchain like we did last time.
+It's a many lesson long process to fully understand. In fact, the Swapchain is
+one portion of the overall rendering pipeline. So we saw a bit of the whole
+picture in the last lesson, we'll add more this lesson, and we'll keep expanding
+and refining our process in each future lesson.</p>
+<p>The entire field of 3D programming is just an unending process of learning more
+and more about how you can twist the rendering pipeline to do exactly what you
+want, when you want, as fast as possible.</p>
+<p>If that concept doesn't excite and interest you, best to get out now. No shame
+in wanting to code other parts of a program instead, but that's really all we'll
+be doing, so save yourself the time if that's not what you care about.</p>
+<a class="header" href="#terminology-sidebar-immediate-vs-retained" id="terminology-sidebar-immediate-vs-retained"><h3>Terminology Sidebar: Immediate vs Retained</h3></a>
+<p>As we go further I should probably define two terms you might see come up here
+or in other graphics tutorials: Immediate API and Retained API.</p>
+<ul>
+<li>An immediate API is any API where you call a function with an argument and it
+does all the work with that argument right then, without storing the argument
+data for later.</li>
+<li>A retained API is any API where your function calls cause data to be
+<em>retained</em> by the system. Usually you make some calls to set up the situation,
+and then you make a separate call to compute things using the requested setup.</li>
+</ul>
+<p>In general, an immediate API is often easier to use, but a retained API is often
+more efficient if the input format and usage format differ (so you don't have to
+convert more than once) or if the system needs special resources (heap
+allocation, open file handles, things like that).</p>
+<a class="header" href="#quick-bug-fixes" id="quick-bug-fixes"><h2>Quick Bug Fixes</h2></a>
+<p>There's two things we have to change about last lesson's code before we proceed
+to mostly work on new code.</p>
+<a class="header" href="#that-swapchain-is-too-big" id="that-swapchain-is-too-big"><h3>That Swapchain Is Too Big!</h3></a>
+<p>On the Metal backend (mac os) the extent that's reported in the swapchain
+capabilities isn't clamped to the window size, so you get a reported maximum
+size of 4096 x 4096. Obviously that's far too big! It doesn't matter for just
+clearing the screen, but it matters now that we'll be drawing something.</p>
+<p>We just have to edit how we define the extent as we create our Swapchain:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+let extent = {
+  let window_client_area = window
+    .get_inner_size()
+    .ok_or(&quot;Window doesn't exist!&quot;)?
+    .to_physical(window.get_hidpi_factor());
+  Extent2D {
+    width: caps.extents.end.width.min(window_client_area.width as u32),
+    height: caps.extents.end.height.min(window_client_area.height as u32),
+  }
+};
+#}</code></pre></pre>
+<a class="header" href="#the-swapchain-doesnt-resize" id="the-swapchain-doesnt-resize"><h3>The Swapchain Doesn't Resize!</h3></a>
+<p>The window can resize, but the backing swapchain doesn't resize. Again, this
+isn't apparent when you're drawing nothing, but once you draw something it'll be
+drawing at the starting resolution and then scaling up or down to the window's
+real size.</p>
+<p>Now, you <em>could</em> try to carefully destroy anything that came from the Swapchain
+and then the Swapchain itself and then re-create each element at the new size.
+You could, it'd work.</p>
+<p>Why bother being so fiddly though? We've gone to all the work of making our
+<code>HalState</code> type very cleanly close itself down. Let's take advantage of that and
+just throw out the <em>entire</em> old <code>HalState</code> and build a new one. We don't have to
+think about what the ordering of anything is, we don't have to remember to
+update the change_resolution code every time we touch some other part of the
+code. It's really so much less error prone. &quot;Just restart the whole thing&quot; is
+how you get that magical <a href="https://en.wikipedia.org/wiki/Erlang_(programming_language)">Nine Nines
+Stability</a>, after
+all ;3</p>
+<p>Note that we need to restart hal if we detect a window size change, but <em>also</em>
+if we're using <code>Mailbox</code> mode it's possible for the GPU to try and present a
+frame in the moment between when the window resizes and when we detect the error
+and respond. To cover this case, we'll also try to restart hal if we get any
+rendering error.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+loop {
+  let inputs = UserInput::poll_events_loop(&amp;mut winit_state.events_loop);
+  if inputs.end_requested {
+    break;
+  }
+  if inputs.new_frame_size.is_some() {
+    debug!(&quot;Window changed size, restarting HalState...&quot;);
+    drop(hal_state);
+    hal_state = match HalState::new(&amp;winit_state.window) {
+      Ok(state) =&gt; state,
+      Err(e) =&gt; panic!(e),
+    };
+  }
+  local_state.update_from_input(inputs);
+  if let Err(e) = do_the_render(&amp;mut hal_state, &amp;local_state) {
+    error!(&quot;Rendering Error: {:?}&quot;, e);
+    debug!(&quot;Auto-restarting HalState...&quot;);
+    drop(hal_state);
+    hal_state = match HalState::new(&amp;winit_state.window) {
+      Ok(state) =&gt; state,
+      Err(e) =&gt; panic!(e),
+    };
+  }
+}
+#}</code></pre></pre>
+<p>Now <strong>please</strong> be aware that this isn't actually the best design for every
+possible <code>gfx-hal</code> program! It's just the best way to do it for our small
+program here. The more data that you've uploaded to the GPU that you want to
+preserve, the more you might want to consider rebuilding just a small number of
+parts. It's something you have to investigate for yourself as your program
+grows.</p>
+<a class="header" href="#drawing-a-triangle" id="drawing-a-triangle"><h1>Drawing A Triangle</h1></a>
+<p>To draw a triangle, we will use the same sort of setup before, with the frame
+based drawing and the &quot;ring buffer&quot; vectors of all our tools. Literally just
+copy and paste all of <code>draw_clear_frame</code> to a new spot and name it
+<code>draw_triangle_frame</code>, the bulk of it is that similar. The argument is a single
+triangle instead of a single color though.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub fn draw_triangle_frame(&amp;mut self, triangle: Triangle) -&gt; Result&lt;(), &amp;'static str&gt; {
+#}</code></pre></pre>
+<p>Now you'd think &quot;hey can't we abstract the commonalities here? Well, maybe but
+you can't really do it with a function and a closure because lifetimes and
+function borders don't play particularly nice in Rust. Our draw code
+unfortunately really relies on having a lot of &quot;split borrows&quot; (where the borrow
+is just on one field at a time) instead of struct-wide borrows (eg: <code>&amp;self</code> or
+<code>&amp;mut self</code>). Or you could do it as a macro maybe? Either way it'd be probably
+quite a bit of work for not too much gained. We don't want to over abstract
+until we see how the code is growing.</p>
+<a class="header" href="#upload-that-triangle-data" id="upload-that-triangle-data"><h2>Upload That Triangle Data</h2></a>
+<p>To actually place data for the triangle into the vertex buffer we need a mapping
+writer. Unfortunately, this is <em>basically</em> a reference, which means that it has
+a lifetime linked to a particular blob of <code>Memory</code> from the GPU, which means
+that we can't really store it in the same struct that holds the handle to the
+Memory because Rust is just bad at self-referential struct things. Instead,
+we'll get a mapping writer, use it, and then destroy it.</p>
+<p>(Hint: if you already read <a href="https://doc.rust-lang.org/nomicon/">The
+Rustonomicon</a> like I told you to in the
+Introduction, then you already know how to cheese it and avoid this limitation
+at the small cost of <em>massive</em> unsafety, should you want to. If you need <em>me</em> to
+tell you how, then you're not ready to do it.)</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+    // WRITE THE TRIANGLE DATA
+    unsafe {
+      let mut data_target = self
+        .device
+        .acquire_mapping_writer(&amp;self.memory, 0..self.requirements.size)
+        .map_err(|_| &quot;Failed to acquire a memory writer!&quot;)?;
+      let points = triangle.points_flat();
+      data_target[..points.len()].copy_from_slice(&amp;points);
+      self
+        .device
+        .release_mapping_writer(data_target)
+        .map_err(|_| &quot;Couldn't release the mapping writer!&quot;)?;
+    }
+#}</code></pre></pre>
+<p>As you'll see in future lessons, it's actually very rare to update all the
+vertex data of a model every frame. Usually you set it once and then use
+&quot;transforms&quot; to move the model around within the scene, without actually
+affecting the vertex data. For now, we'll just push fresh vertex data each
+frame.</p>
+<a class="header" href="#record-the-commands" id="record-the-commands"><h2>Record The Commands</h2></a>
+<p>All that really changes here compared to <code>draw_clear_frame</code> is that instead of
+starting a CommandBuffer and then recording <em>nothing</em>, we'll actually record
+something this time.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+    // RECORD COMMANDS
+    unsafe {
+      let buffer = &amp;mut self.command_buffers[i_usize];
+      const TRIANGLE_CLEAR: [ClearValue; 1] = [ClearValue::Color(ClearColor::Float([0.1, 0.2, 0.3, 1.0]))];
+      buffer.begin(false);
+      {
+        let mut encoder = buffer.begin_render_pass_inline(
+          &amp;self.render_pass,
+          &amp;self.framebuffers[i_usize],
+          self.render_area,
+          TRIANGLE_CLEAR.iter(),
+        );
+        encoder.bind_graphics_pipeline(&amp;self.graphics_pipeline);
+        // Here we must force the Deref impl of ManuallyDrop to play nice.
+        let buffer_ref: &amp;&lt;back::Backend as Backend&gt;::Buffer = &amp;self.buffer;
+        let buffers: ArrayVec&lt;[_; 1]&gt; = [(buffer_ref, 0)].into();
+        encoder.bind_vertex_buffers(0, buffers);
+        encoder.draw(0..3, 0..1);
+      }
+      buffer.finish();
+    }
+#}</code></pre></pre>
+<p>This time out the mouse will control one of the triangle points instead of the
+color, so we'll pick a fixed color for the clear color. Once we start the
+&quot;render pass inline&quot; we're actually going to bind what we get back from that.
+It's a
+<a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/command/struct.RenderPassInlineEncoder.html">RenderPassInlineEncoder</a>,
+which is also
+Deref&lt;Target=<a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/command/struct.RenderSubpassCommon.html">RenderSubpassCommon</a>&gt;,
+and it gives us access to the operations of a particular render pass.</p>
+<ul>
+<li><a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/command/struct.RenderSubpassCommon.html#method.bind_graphics_pipeline">RenderSubpassCommon::bind_graphics_pipeline</a>
+picks a particular graphics pipeline for the rendering of this subpass. You
+<em>can</em> have more than one graphics pipeline, each with its own settings, if you
+want, though while we're starting out we only need one per program.</li>
+<li><a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/command/struct.RenderSubpassCommon.html#method.bind_vertex_buffers">RenderSubpassCommon::bind_vertex_buffers</a>
+picks the vertex buffers to use for this subpass. The magical looking <code>0</code> here
+has to match up with the
+<a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/pso/struct.VertexBufferDesc.html">VertexBufferDesc</a>
+that's specified as part of the graphics pipeline that you're using. We'll
+talk about the full graphics pipeline definition in a moment, but the thing to
+pay attention to right now is that you can have many buffers and you don't
+need to specify them all in a single bind call. You could give 3 starting at
+0, give 3 more starting at 3, etc. We only have one buffer, so we just need
+one bind call and we place it at the 0th index.</li>
+<li><a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/command/struct.RenderSubpassCommon.html#method.draw">RenderSubpassCommon::draw</a>
+uses Range properly, so those really are exclusive endings. This uses our
+three vertices (indexed 0, 1, 2) and a single instance (indexed 0). The
+instance thing has to do with a more advanced technique called &quot;instanced
+drawing&quot; where you can draw a particular setup many times as a single draw
+call, specifying parameters per instance. That'd be for something like drawing
+ten copies of the same tree model, each in their own position and orientation
+within the scene. There's a small price per draw call that you make, so if
+you're drawing &quot;the same&quot; thing many times with small variation it pays off to
+setup instanced drawing and make a single draw call with many instances
+specified. We'll cover all that more in a future lesson. For now we've just
+got a single triangle as part of a single instance.</li>
+</ul>
+<p>That's all we gotta do!</p>
+<p>&quot;all&quot;</p>
+<p>What comes next is setting up the graphical pipeline to make this happen.</p>
+<a class="header" href="#define-a-graphics-pipeline" id="define-a-graphics-pipeline"><h1>Define A Graphics Pipeline</h1></a>
+<p>I know that in the last lesson we did all of our setup without any of the code
+being placed into helper functions, and I stand by that. None of it was super
+complex (honest!) and most of the sub-parts weren't ever going to be called in
+different contexts with different inputs. Most of the time you want to make
+something a function when you're going to reuse it, not just because it's long.</p>
+<p>This time I'm going to bend on that, because the graphics pipeline setup is
+about 2/3rds as long as <em>all of</em> the initialization setup that we did before.
+It's not even super complex, there's just a billion little settings and options
+that we have to specify.</p>
+<a class="header" href="#create_pipeline-signature" id="create_pipeline-signature"><h2><code>create_pipeline</code> Signature</h2></a>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  #[allow(clippy::type_complexity)]
+  fn create_pipeline(
+    device: &amp;mut back::Device, extent: Extent2D, render_pass: &amp;&lt;back::Backend as Backend&gt;::RenderPass,
+  ) -&gt; Result&lt;
+    (
+      Vec&lt;&lt;back::Backend as Backend&gt;::DescriptorSetLayout&gt;,
+      &lt;back::Backend as Backend&gt;::PipelineLayout,
+      &lt;back::Backend as Backend&gt;::GraphicsPipeline,
+    ),
+    &amp;'static str,
+  &gt; {
+#}</code></pre></pre>
+<p>Okay, ha, so, what have we got here. First, we're telling clippy to please stay
+calm despite the very complex return type there. It wants us to make a
+<code>Result&lt;Struct, &amp;str&gt;</code>, and I won't say it's wrong, it's just not what I wanna
+do with my time right now. We'll just use a 3-tuple.</p>
+<p>So what does our pipeline need for us to get our Result? First of all, let's be
+<em>super</em> clear if it wasn't clear enough already from the tuple: The &quot;pipeline&quot;
+is actually three different parts, <em>one of which</em> is a thing that's actually
+called GraphicsPipeline, but also we need to know the PipelineLayout that goes
+with it, as well as the DescriptorSetLayout. I'd love to link you to some docs
+for these types, but the specifics of all three are Backend dependent. We just
+take it on faith that they do something important, without yet knowing what they
+do precisely.</p>
+<p>If we review the
+<a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/device/trait.Device.html">Device</a> trait
+we'll see that each of these things comes from a <code>create_foo</code> method on the
+Device, so we'll need to add them to the Drop code for <code>HalState</code>. I'll assume
+that you can do that yourself by now, you just do the same thing as before. 1)
+store it as a ManuallyDrop, 2) use <code>read</code> to pseudo-clone it and then pass that
+pseudo-clone to the <code>destroy_foo</code> method.</p>
+<p>So we need <code>&amp;mut Device</code> as an input. We also need the <code>Extent2D</code> for what size
+of Swapchain this pipeline setup goes with. Finally, we need a <code>&amp;RenderPass</code>.
+The sub-passes of the pipeline we make will need to be able to reference back to
+it during the setup.</p>
+<p>So we want to make a
+<a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/pso/struct.GraphicsPipelineDesc.html">GraphicsPipelineDesc</a>,
+but as you can see there's 13 fields there, so we'll have to handle a few at a
+time until everything is ready.</p>
+<a class="header" href="#shader-modules" id="shader-modules"><h2>Shader Modules</h2></a>
+<p>A <strong>Shader</strong> is one of several parts of the graphical pipeline on the GPU.
+There's several stages of shader, as well as some non-shader stages. Right here
+I'm going to go ahead and use a graphic from the <a href="https://vulkan-tutorial.com/Drawing_a_triangle/Graphics_pipeline_basics">Graphics Pipeline
+Basics</a>
+potion of the <a href="https://vulkan-tutorial.com">vulkan-tutorial.com</a> tutorial, because
+they've got a pretty slick diagram of it.</p>
+<p><img src="https://vulkan-tutorial.com/images/vulkan_simplified_pipeline.svg" alt="pipeline-diagram" /></p>
+<p>Things in <em>green</em> are selections we can make, but from only a limited list of
+options. Things in <em>yellow</em> are things that we can write a shader for.</p>
+<p>A shader is a mini-program (sometimes not so mini) that has its own options for
+source language, and it's own compiled format, and all of that. Instead of
+writing in Rust and compiling to <code>ARM</code> or <code>x86_64</code> or something else, we write a
+program in <a href="https://en.wikipedia.org/wiki/OpenGL_Shading_Language">GLSL</a> and
+compile it to <a href="https://www.khronos.org/registry/spir-v/">SPIRV</a>. Actually you
+can write a shader in anything that compiles to compatible SPIRV code, but the
+tools that are easiest for us to use right now do GLSL -&gt; SPIRV.</p>
+<p>A <strong>Shader Module</strong> is a handle that you get when you upload some shader code to
+the GPU. We take a few shader modules and put them together into a
+<a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/pso/struct.GraphicsShaderSet.html">GraphicsShaderSet</a>.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+    let mut compiler = shaderc::Compiler::new().ok_or(&quot;shaderc not found!&quot;)?;
+    let vertex_compile_artifact = compiler
+      .compile_into_spirv(VERTEX_SOURCE, shaderc::ShaderKind::Vertex, &quot;vertex.vert&quot;, &quot;main&quot;, None)
+      .map_err(|_| &quot;Couldn't compile vertex shader!&quot;)?;
+    let fragment_compile_artifact = compiler
+      .compile_into_spirv(FRAGMENT_SOURCE, shaderc::ShaderKind::Fragment, &quot;fragment.frag&quot;, &quot;main&quot;, None)
+      .map_err(|e| {
+        error!(&quot;{}&quot;, e);
+        &quot;Couldn't compile fragment shader!&quot;
+      })?;
+    let vertex_shader_module = unsafe {
+      device
+        .create_shader_module(vertex_compile_artifact.as_binary_u8())
+        .map_err(|_| &quot;Couldn't make the vertex module&quot;)?
+    };
+    let fragment_shader_module = unsafe {
+      device
+        .create_shader_module(fragment_compile_artifact.as_binary_u8())
+        .map_err(|_| &quot;Couldn't make the fragment module&quot;)?
+    };
+#}</code></pre></pre>
+<p>For this to work, you have to use the <code>shaderc-rs</code> crate, which takes <em>very</em>
+long to build that first time because it's actually using <code>build.rs</code> to download
+a relatively massive C++ lib and then link that in. Be sure to see the <code>shaderc-rs</code>
+<a href="https://github.com/google/shaderc-rs#setup">setup instructions</a>.</p>
+<ol>
+<li>We open a compiler</li>
+<li>We compile some Vertex Shader source. This is &quot;where do the points go on the
+screen&quot;. We use a string literal in our file, the shader type we want, a
+dummy file name (it's just used for error messages), the &quot;entry point&quot; of the
+program, and finally we could give some extra options if we wanted.</li>
+<li>Then we do the exact same thing for the Fragment Shader. This is &quot;what color
+are the points&quot;.</li>
+</ol>
+<p>To form a GraphicsShaderSet you <em>always</em> need a vertex shader, and then all the
+other types are optional. However, to form an image you always must include a
+fragment shader or all the color output is undefined (hard to have an image
+without any colors). There <em>are</em> things you can do with a GraphicsShaderSet
+where you don't need a fragment shader because you don't use the color channel
+output, but those are for some future lesson.</p>
+<p>In fact, shaders are complex enough that we'll spend the next lesson on a proper
+shader introduction, and I'm going to punt all the rest of the description about
+them until that lesson.</p>
+<p>The last thing to say here is that the shader modules need to be destroyed, but
+we don't need to store them forever in the <code>HalState</code>. We can destroy them after
+we've made our graphics pipeline parts but before <code>create_pipeline</code> returns.
+Once they've been incorporated into the pipeline we don't need to hold on to the
+individual handles any more.</p>
+<a class="header" href="#make-a-graphicsshaderset" id="make-a-graphicsshaderset"><h2>Make A GraphicsShaderSet</h2></a>
+<p>Next, we go into one of those inner scopes that we love to use. Don't you love
+'em? I sure do. Scopes for days. In this case, the point here is that we're
+separating off all the stuff that happens while we've got those shader modules
+created.</p>
+<p>To make a GraphicsShaderSet we need an
+<a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/pso/struct.EntryPoint.html">EntryPoint</a>
+for each shader. It needs the <code>entry</code> (which matches the entry defined in the
+compiled SPIRV code), the shader module, and a
+<a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/pso/struct.Specialization.html">Specialization</a>,
+which we won't use right now (we'll just give empty slices).</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      let (vs_entry, fs_entry) = (
+        EntryPoint {
+          entry: &quot;main&quot;,
+          module: &amp;vertex_shader_module,
+          specialization: Specialization {
+            constants: &amp;[],
+            data: &amp;[],
+          },
+        },
+        EntryPoint {
+          entry: &quot;main&quot;,
+          module: &amp;fragment_shader_module,
+          specialization: Specialization {
+            constants: &amp;[],
+            data: &amp;[],
+          },
+        },
+      );
+      let shaders = GraphicsShaderSet {
+        vertex: vs_entry,
+        hull: None,
+        domain: None,
+        geometry: None,
+        fragment: Some(fs_entry),
+      };
+#}</code></pre></pre>
+<a class="header" href="#input-assembler" id="input-assembler"><h2>Input Assembler</h2></a>
+<p>Once we've got all of our shader stuff arranged, we need to define all the other
+parts. The first thing up (going in order of the pipeline diagram) is the
+<a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/pso/struct.InputAssemblerDesc.html">InputAssemblerDesc</a>,
+where we pick a
+<a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/enum.Primitive.html">Primitive</a> for how
+our vertices will be treated. The vertices are really just a huge list of values
+(usually <code>f32</code>, but even then not always), and you have to tell the system how
+it's supposed to turn those values into geometry. You should check the <a href="https://vulkan.lunarg.com/doc/view/1.0.33.0/linux/vkspec.chunked/ch19s01.html">vulkan
+docs</a>
+on this one, because they really get into it with diagrams and everything, but
+here's the short version:</p>
+<ul>
+<li>As you expect, there's triangles, but you can also specify lines and points.</li>
+<li>Geometry can be given as a &quot;list&quot;, where each unit is totally unique, or as a
+&quot;strip&quot; where successive units share some vertex data. This can be trickier to
+arrange until you get used to it, but it saves on data uploaded and data
+stored. Even as desktops move to having 8GB or 16GB of RAM, the GPU itself has
+half (or less!) of that, so making your models &quot;compressed&quot; like this is very
+nice.</li>
+</ul>
+<a class="header" href="#vertex-shader" id="vertex-shader"><h2>Vertex Shader</h2></a>
+<p>I know that we already have a shader module for our vertex shader, but we also
+need to specify what buffers are going to be serving up vertex data, as well as
+the attributes for the data. I said that the vertex data is actually just a huge
+list of values, but those values aren't <em>only</em> positions for each vertex. You
+most commonly will specify color and/or texture info as well as position
+information.</p>
+<p>Well, you <em>would</em> if you were doing a bigger example than this. To start we're
+doing a single monochrome triangle, so we'll just have each vertex specify an
+<code>(x,y)</code> position.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      let vertex_buffers: Vec&lt;VertexBufferDesc&gt; = vec![VertexBufferDesc {
+        binding: 0,
+        stride: (size_of::&lt;f32&gt;() * 2) as u32,
+        rate: 0,
+      }];
+      let attributes: Vec&lt;AttributeDesc&gt; = vec![AttributeDesc {
+        location: 0,
+        binding: 0,
+        element: Element {
+          format: Format::Rg32Float,
+          offset: 0,
+        },
+      }];
+#}</code></pre></pre>
+<p>For the
+<a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/pso/struct.VertexBufferDesc.html">VertexBufferDesc</a>
+we give:</p>
+<ul>
+<li>A <code>binding</code> index: remember that &quot;magical 0&quot; I mentioned we used when we wrote
+the CommandBuffer? That's this thing.</li>
+<li>A <code>stride</code>: how much space, in bytes, between the start of one vertex data
+blob and the next</li>
+<li>A <code>rate</code>: which is for that instanced drawing thing that I said we'd do in a
+future lessons).
+We need one of these descriptions <em>per vertex buffer</em>.</li>
+</ul>
+<p>For the
+<a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/pso/struct.AttributeDesc.html">AttributeDesc</a>
+we give</p>
+<ul>
+<li>A <code>location</code>: which will match up with locations specified for inputs in our
+shader code. They're counted up from 0, like array indexes.</li>
+<li>A <code>binding</code>: which matches up with the VertexBufferDesc that this
+AttributeDesc is for. Each VertexBufferDesc can have its own attribute
+arrangement if you like, it can get quite intricate.</li>
+<li>An <code>element</code>: This is an
+<a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/pso/struct.Element.html">Element</a>
+entry, which gives the
+<a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/format/enum.Format.html">Format</a> of the
+particular attribute, as well as the byte offset for how far into the vertex
+entry this particular attribute starts. The formats are mostly all specified
+in terms of what sort of color data format they'd give, so &quot;two f32 values&quot; is
+<code>Rg32Float</code>, even though we won't be using them as red and green channel data.
+This is one of those things where you just have to accept that bits are bits
+and the meaning is more what you make of it.</li>
+</ul>
+<a class="header" href="#tessellation-shader" id="tessellation-shader"><h2>Tessellation Shader</h2></a>
+<p>We don't do anything here! Freebie! This <em>would</em> break up geometry into smaller
+geometry to add apparent details, but we're not gonna right now.</p>
+<a class="header" href="#geometry-shader" id="geometry-shader"><h2>Geometry Shader</h2></a>
+<p>We also don't do anything here! Another freebie! This <em>would</em> let us process
+each geometry item (point/line/triangle) into either 0 outputs (canceling that
+item), 1 output, or even more than one output (kinda like the tessellation
+shader).</p>
+<a class="header" href="#rasterization" id="rasterization"><h2>Rasterization</h2></a>
+<p>Once we have all of our geometry arranged, we need to translate the points into
+pixels on the screen. So we specify a <a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/pso/struct.Rasterizer.html">Rasterizer</a>:</p>
+<ul>
+<li><code>polygon_mode</code>: Pick a
+<a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/pso/enum.PolygonMode.html">PolygonMode</a>.
+Usually you want <code>Fill</code>, though <code>Line</code> and <code>Point</code> are neat for &quot;debug
+display&quot; sorts of things. Or if you want to go for the &quot;Tron&quot; look.</li>
+<li><code>cull_face</code>: When you define a triangle, it's obviously got two sides (called
+&quot;front&quot; and &quot;back&quot;). You can make it so that if a triangle is viewed from the
+&quot;wrong&quot; side then it's not included in the output.</li>
+<li><code>front_face</code>: The &quot;front&quot; of the triangle depends on the order that the vertex
+data is specified, it can be &quot;clockwise&quot; or &quot;counterclockwise&quot; (that's
+&quot;widdershins&quot; for all our UK friends). This decision is basically arbitrary,
+your models can go either way as long as they match what you define here.</li>
+<li><code>depth_clamping</code>: If a thing is off the screen in X or Y we're not going to
+see it, but what about the Z direction? If this is false then things that are
+&quot;out of bounds&quot; in the Z direction get culled. If this is true then they get
+their Z position clamped, so they end up included in the output.</li>
+<li><code>depth_bias</code>: An optional parameter that's for when you need to draw things
+very closely to one other in the Z direction. Without this you can get a very
+bad looking effect called &quot;z-fighting&quot; where two elements become incorrectly
+mixed together visually
+(<a href="http://farm8.staticflickr.com/7355/8872454389_b82ae11d77_o.png">pic</a>). This
+lets you apply some <a href="https://www.khronos.org/registry/vulkan/specs/1.0/html/vkspec.html#primsrast-depthbias">complicated
+math</a>
+to compensate for such a situation. Another one of those &quot;we'll get to it
+later&quot; things, so we specify <code>None</code> to start.</li>
+<li><code>conservative</code>: This is a <a href="https://developer.nvidia.com/content/dont-be-conservative-conservative-rasterization">neat graphics
+extension</a>
+that basically lets more fragments be generated per geometry unit, which can
+lead to a much better result, because the output appears more &quot;smoothly&quot; (see
+the pics in that article to understand what I'm trying to say). There's
+probably a reasonable number of GPUs that might be running gfx-hal that
+<em>wouldn't</em> support this extension though, so we won't request it starting out,
+because with just one triangle it doesn't make a difference in the scene.</li>
+</ul>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      let rasterizer = Rasterizer {
+        depth_clamping: false,
+        polygon_mode: PolygonMode::Fill,
+        cull_face: Face::NONE,
+        front_face: FrontFace::Clockwise,
+        depth_bias: None,
+        conservative: false,
+      };
+#}</code></pre></pre>
+<a class="header" href="#fragment-shader" id="fragment-shader"><h2>Fragment Shader</h2></a>
+<p>So the rasterizer turned all of our geometry elements into pixel locations for
+us, now the final shader runs. It takes &quot;some data&quot; and picks a color for this
+&quot;fragment&quot;. A fragment is like a <em>part</em> of a pixel. Depending on the full scene,
+more than one fragment can end up in the same pixel, and then they'll get
+blended together. You don't know what the pixel will finally be until all of the
+fragments that touch that pixel are done.</p>
+<p>The actual data that the fragment shader gets is mostly whatever the previous
+stages of the pipeline have output. There's no specific format and there's no
+&quot;FragmentShaderDesc&quot; type that you set up on the CPU side. It's all defined in
+your shader files. Any per-fragment values have to come through the previous
+stages of the pipeline, starting back at the Vertex Shader. There is the ability
+to have global, read only data (as a Push Constant or Uniform), but any
+per-fragment data has to come through the whole pipeline process.</p>
+<p>A single geometry element can have many fragments. Imagine a triangle that goes
+from the bottom left, to the top left, to the top right. There's only three
+vertices, but <em>half the screen</em> is covered in fragments. The pipeline
+interpolates the values for any fragment that's not directly from a vertex
+(which is almost every fragment ever, honestly). That might sound kinda spooky,
+but the weird part is that it works really well even once textures and stuff are
+involved.</p>
+<a class="header" href="#multisampling" id="multisampling"><h3>Multisampling</h3></a>
+<p>Sometimes you'll get edges in your pictures that look &quot;jagged&quot;. The eyes can
+pick up where a long line is jumping from one pixel to the next if it's almost
+but not quite vertical or horizontal. Fixing that is called &quot;anti-aliasing&quot;, and
+there's more than one way to do it.</p>
+<p>The pipeline in <code>gfx-hal</code> has a parameter for &quot;multisampling&quot;, where instead of
+computing fragments on a pixel basis, you compute them on a sub-pixel basis and
+average the results. You're basically just throwing computational power at the
+problem to try and get a more accurate result. Naturally, if you do enable
+multisampling, you want to allow for a user to turn such a feature off if they
+don't have as good of a graphics card. We won't enable it for now, because
+adding it in touches just a little bit of the swapchain, the render pass, the
+pipeline, anything that has to do with images. We can do that as lesson of its
+own soon.</p>
+<a class="header" href="#depth-testing" id="depth-testing"><h3>Depth Testing</h3></a>
+<p>This is actually not <em>specifically</em> part of the fragment shader, it's a step
+after the fragment shader but before the color blending. There's no space for
+that on our handy diagram, so we'll talk about it right here. Basically, in
+addition to having colors, an image also has depth values for each pixel (we've
+touched on this a bit before). After a fragment shader runs and <em>would</em> perform
+a change there's a depth test, and you can determine what actual change, if any,
+goes into effect. Or you can enable <a href="http://vulkan-spec-chunked.ahcox.com/ch25s04.html">early fragment test
+mode</a> if you want, it's one
+of <a href="http://vulkan-spec-chunked.ahcox.com/ch25s01.html">many operations</a> that can
+potentially discard a fragment.</p>
+<p>As you're probably getting sick of hearing at this point, we're not using depth
+testing right now.</p>
+<p>Note that there's two different structs called <code>DepthStencilDesc</code> in the
+<code>gfx-hal</code> crate. The one in the <code>image</code> module is deprecated old nonsense, we
+want to be sure to import the one from the <code>pso</code> module.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      let depth_stencil = DepthStencilDesc {
+        depth: DepthTest::Off,
+        depth_bounds: false,
+        stencil: StencilTest::Off,
+      };
+#}</code></pre></pre>
+<a class="header" href="#color-blending" id="color-blending"><h2>Color Blending</h2></a>
+<p>The final stage is color blending. Since we're doing 3d graphics, sometimes one
+thing will need to appear &quot;in front of&quot; another. If it's fully opaque you just
+draw the closer thing, but sometimes you get fragments that aren't fully opaque,
+and so you blend the closer and farther thing. We can describe how we want that
+to happen.</p>
+<p>Except we're not doing blending stuff so we're going to totally ignore the
+&quot;current destination value&quot; and only take the &quot;source value&quot;.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      let blender = {
+        let blend_state = BlendState::On {
+          color: BlendOp::Add {
+            src: Factor::One,
+            dst: Factor::Zero,
+          },
+          alpha: BlendOp::Add {
+            src: Factor::One,
+            dst: Factor::Zero,
+          },
+        };
+        BlendDesc {
+          logic_op: Some(LogicOp::Copy),
+          targets: vec![ColorBlendDesc(ColorMask::ALL, blend_state)],
+        }
+      };
+#}</code></pre></pre>
+<a class="header" href="#more-things-to-define" id="more-things-to-define"><h2>More Things To Define</h2></a>
+<p>You thought we were done! Ha, if only.</p>
+<a class="header" href="#bakedstates" id="bakedstates"><h3>BakedStates</h3></a>
+<p>We need to define</p>
+<ul>
+<li><code>viewport</code>: Defines part of the whole
+<a href="https://renderdoc.org/vkspec_chunked/chap25.html#vertexpostproc-viewport">viewport</a>
+process. Right now <code>gfx-hal</code> doesn't support more than one viewport, but it's
+on the list of TODOs for 0.2.</li>
+<li><code>scissor</code>: Defines the params for the <a href="https://renderdoc.org/vkspec_chunked/chap27.html#fragops-scissor">scissor
+test</a>, which
+takes in 2d framebuffer coordinates and cancels a fragment if it falls outside
+the scissor area. This is also going to eventually allow for more than one
+scissor areas, but it's not there yet.</li>
+<li><code>blend_color</code>: This is a static color to blend over the whole image. You
+probably don't want this most of the time, since it's baked into the whole
+pipeline. For dynamic color blend effects (eg: flashing the screen red when an
+attack hits) you'd put that in as part of your fragment shader.</li>
+<li><code>depth_bounds</code>: This defines the limits of that depth test thing.</li>
+</ul>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      let baked_states = BakedStates {
+        viewport: Some(Viewport {
+          rect: extent.to_extent().rect(),
+          depth: (0.0..1.0),
+        }),
+        scissor: Some(extent.to_extent().rect()),
+        blend_color: None,
+        depth_bounds: None,
+      };
+#}</code></pre></pre>
+<a class="header" href="#non-buffer-data-sources" id="non-buffer-data-sources"><h3>Non-Buffer Data Sources</h3></a>
+<p>Data for the graphics pipeline <em>can</em> come from things other than the vertex
+buffer. We're not doing that here, but we still have to <em>say</em> that we're not
+doing it here.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      let bindings = Vec::&lt;DescriptorSetLayoutBinding&gt;::new();
+      let immutable_samplers = Vec::&lt;&lt;back::Backend as Backend&gt;::Sampler&gt;::new();
+      let descriptor_set_layouts: Vec&lt;&lt;back::Backend as Backend&gt;::DescriptorSetLayout&gt; = vec![unsafe {
+        device
+          .create_descriptor_set_layout(bindings, immutable_samplers)
+          .map_err(|_| &quot;Couldn't make a DescriptorSetLayout&quot;)?
+      }];
+      let push_constants = Vec::&lt;(ShaderStageFlags, core::ops::Range&lt;u32&gt;)&gt;::new();
+      let layout = unsafe {
+        device
+          .create_pipeline_layout(&amp;descriptor_set_layouts, push_constants)
+          .map_err(|_| &quot;Couldn't create a pipeline layout&quot;)?
+      };
+#}</code></pre></pre>
+<a class="header" href="#graphics-pipeline" id="graphics-pipeline"><h2>Graphics Pipeline</h2></a>
+<p>We can finally, <em>finally</em> make that graphics pipeline. We use all the stuff
+declared so far, and a few more filler arguments that are unimportant to us
+right now, to make a
+<a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/pso/struct.GraphicsPipelineDesc.html">GraphicsPipelineDesc</a>.
+That gets passed to
+<a href="https://docs.rs/gfx-hal/0.1.0/gfx_hal/device/trait.Device.html#method.create_graphics_pipeline">Device::create_graphics_pipeline</a>.
+We could optionally specify a pipeline cache too, but we don't have such a thing
+yet.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      let gfx_pipeline = {
+        let desc = GraphicsPipelineDesc {
+          shaders,
+          rasterizer,
+          vertex_buffers,
+          attributes,
+          input_assembler,
+          blender,
+          depth_stencil,
+          multisampling: None,
+          baked_states,
+          layout: &amp;layout,
+          subpass: Subpass {
+            index: 0,
+            main_pass: render_pass,
+          },
+          flags: PipelineCreationFlags::empty(),
+          parent: BasePipeline::None,
+        };
+
+        unsafe {
+          device
+            .create_graphics_pipeline(&amp;desc, None)
+            .map_err(|_| &quot;Couldn't create a graphics pipeline!&quot;)?
+        }
+      };
+#}</code></pre></pre>
+<a class="header" href="#backing-out-of-create_pipeline" id="backing-out-of-create_pipeline"><h2>Backing Out Of <code>create_pipeline</code></h2></a>
+<p>Once that's done we go up a level, destroy our shader modules, and then return
+what we've built to the caller.</p>
+<a class="header" href="#define-a-buffer-for-vertex-data" id="define-a-buffer-for-vertex-data"><h1>Define A Buffer For Vertex Data</h1></a>
+<p>So within <code>HalState::new</code> we've made some pipeline bits:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+    // Build our pipeline and vertex buffer
+    let (descriptor_set_layouts, pipeline_layout, graphics_pipeline) = Self::create_pipeline(&amp;mut device, extent, &amp;render_pass)?;
+#}</code></pre></pre>
+<p>It said that it's going to use a buffer, but we need to make that buffer separately.</p>
+<a class="header" href="#make-a-buffer-and-some-memory" id="make-a-buffer-and-some-memory"><h2>Make A Buffer And Some Memory</h2></a>
+<p>First we ask the Device to please make us a Buffer, which is basically just
+another &quot;handle&quot; thing.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      const F32_XY_TRIANGLE: u64 = (size_of::&lt;f32&gt;() * 2 * 3) as u64;
+      let mut buffer = device
+        .create_buffer(F32_XY_TRIANGLE, BufferUsage::VERTEX)
+        .map_err(|_| &quot;Couldn't create a buffer for the vertices&quot;)?;
+#}</code></pre></pre>
+<p>Now that we have a buffer we can ask what the requirements for the buffer are.
+It might seem strange to make a thing and <em>then</em> ask what the requirements for it
+are, but that's how you do it.</p>
+<p>Using the requirements we can get a &quot;memory type ID&quot;, which allows us to
+allocate some memory to go with this buffer. It's certainly some <em>weird</em> looking
+code, but just go with it.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      let requirements = device.get_buffer_requirements(&amp;buffer);
+      let memory_type_id = adapter
+        .physical_device
+        .memory_properties()
+        .memory_types
+        .iter()
+        .enumerate()
+        .find(|&amp;(id, memory_type)| {
+          requirements.type_mask &amp; (1 &lt;&lt; id) != 0 &amp;&amp; memory_type.properties.contains(Properties::CPU_VISIBLE)
+        })
+        .map(|(id, _)| MemoryTypeId(id))
+        .ok_or(&quot;Couldn't find a memory type to support the vertex buffer!&quot;)?;
+      let memory = device
+        .allocate_memory(memory_type_id, requirements.size)
+        .map_err(|_| &quot;Couldn't allocate vertex buffer memory&quot;)?;
+#}</code></pre></pre>
+<p>And once that is allocated, we can bind the buffer to the memory that goes with
+it.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      device
+        .bind_buffer_memory(&amp;memory, 0, &amp;mut buffer)
+        .map_err(|_| &quot;Couldn't bind the buffer memory!&quot;)?;
+#}</code></pre></pre>
+<a class="header" href="#update-the-halstate-struct" id="update-the-halstate-struct"><h2>Update The <code>HalState</code> Struct</h2></a>
+<p>With these new things in hand, we need to add to the <code>struct</code> definition</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub struct HalState {
+  buffer: ManuallyDrop&lt;&lt;back::Backend as Backend&gt;::Buffer&gt;,
+  memory: ManuallyDrop&lt;&lt;back::Backend as Backend&gt;::Memory&gt;,
+  descriptor_set_layouts: Vec&lt;&lt;back::Backend as Backend&gt;::DescriptorSetLayout&gt;,
+  pipeline_layout: ManuallyDrop&lt;&lt;back::Backend as Backend&gt;::PipelineLayout&gt;,
+  graphics_pipeline: ManuallyDrop&lt;&lt;back::Backend as Backend&gt;::GraphicsPipeline&gt;,
+  requirements: Requirements,
+  current_frame: usize,
+  frames_in_flight: usize,
+  in_flight_fences: Vec&lt;&lt;back::Backend as Backend&gt;::Fence&gt;,
+  render_finished_semaphores: Vec&lt;&lt;back::Backend as Backend&gt;::Semaphore&gt;,
+  image_available_semaphores: Vec&lt;&lt;back::Backend as Backend&gt;::Semaphore&gt;,
+  command_buffers: Vec&lt;CommandBuffer&lt;back::Backend, Graphics, MultiShot, Primary&gt;&gt;,
+  command_pool: ManuallyDrop&lt;CommandPool&lt;back::Backend, Graphics&gt;&gt;,
+  framebuffers: Vec&lt;&lt;back::Backend as Backend&gt;::Framebuffer&gt;,
+  image_views: Vec&lt;(&lt;back::Backend as Backend&gt;::ImageView)&gt;,
+  render_pass: ManuallyDrop&lt;&lt;back::Backend as Backend&gt;::RenderPass&gt;,
+  render_area: Rect,
+  queue_group: QueueGroup&lt;back::Backend, Graphics&gt;,
+  swapchain: ManuallyDrop&lt;&lt;back::Backend as Backend&gt;::Swapchain&gt;,
+  device: ManuallyDrop&lt;back::Device&gt;,
+  _adapter: Adapter&lt;back::Backend&gt;,
+  _surface: &lt;back::Backend as Backend&gt;::Surface,
+  _instance: ManuallyDrop&lt;back::Instance&gt;,
+}
+#}</code></pre></pre>
+<p>And also make all the appropriate changes to the <code>Drop</code> impl, which you're smart
+enough to do yourself at this point.</p>
+<a class="header" href="#rendering-a-triangle" id="rendering-a-triangle"><h1>Rendering A Triangle</h1></a>
+<p>Now that <code>HalState</code> supports it, actually rendering a triangle is pretty simple.
+We just change our <code>do_the_render</code> function.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+fn do_the_render(hal_state: &amp;mut HalState, local_state: &amp;LocalState) -&gt; Result&lt;(), &amp;'static str&gt; {
+  let x = ((local_state.mouse_x / local_state.frame_width) * 2.0) - 1.0;
+  let y = ((local_state.mouse_y / local_state.frame_height) * 2.0) - 1.0;
+  let triangle = Triangle {
+    points: [[-0.5, 0.5], [-0.5, -0.5], [x as f32, y as f32]],
+  };
+  hal_state.draw_triangle_frame(triangle)
+}
+#}</code></pre></pre>
+<p>Those coordinates are given in a 0.0 to 1.0 system, with +X going from left to
+right, and +Y going from top to bottom. Two points of the triangle are fixed,
+and the third one follows the mouse around as it moves. Looks like this:</p>
+<p><img src="images/triangle-intro-complete.png" alt="triangle-intro-complete" /></p>
+<p>You can find the full code file in the <code>examples/</code> directory of the repo.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="03_clear_the_window.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="05_shaders.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="03_clear_the_window.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="05_shaders.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>

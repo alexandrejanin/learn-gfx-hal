@@ -1,0 +1,577 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Shaders - learn-gfx-hal</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="01_introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><a href="02_opening_a_window.html"><strong aria-hidden="true">2.</strong> Opening A Window</a></li><li><a href="03_clear_the_window.html"><strong aria-hidden="true">3.</strong> Clear The Window</a></li><li><a href="04_triangle_intro.html"><strong aria-hidden="true">4.</strong> Triangle Intro</a></li><li><a href="05_shaders.html" class="active"><strong aria-hidden="true">5.</strong> Shaders</a></li><li><a href="06_textures.html"><strong aria-hidden="true">6.</strong> Textures</a></li><li><ol class="section"><li><a href="06_01_generalizing_hal_state.html"><strong aria-hidden="true">6.1.</strong> Generalizing HalState</a></li></ol></li><li><a href="07_coordinates.html"><strong aria-hidden="true">7.</strong> Coordinates</a></li><li><a href="08_camera.html"><strong aria-hidden="true">8.</strong> Camera</a></li><li><a href="09_depth_buffer.html"><strong aria-hidden="true">9.</strong> Depth Buffer</a></li><li><a href="10_instanced_drawing.html"><strong aria-hidden="true">10.</strong> Instanced Drawing</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">learn-gfx-hal</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="#shaders" id="shaders"><h1>Shaders</h1></a>
+<p>I know you've been itching for a short lesson, so let's do a short lesson.</p>
+<p>This time we're talking more about Shaders. <a href="https://www.youtube.com/watch?v=Kh0Y2hVe_bw">What are
+shaders?</a> We just don't know.</p>
+<a class="header" href="#glsl-and-spirv" id="glsl-and-spirv"><h1>GLSL and SPIRV</h1></a>
+<p>Technically you can use any number of shader languages with <code>gfx-hal</code> as long as
+they can compile to SPIRV. There's many options, and even an LLVM/SPIRV
+converter (<a href="https://github.com/KhronosGroup/SPIRV-LLVM">really</a>), so you could
+<em>potentially</em> use a very wide range of options.</p>
+<p>For <strong>now</strong> now we're using a slightly special variant of GLSL, which stands for
+&quot;open Graphics Library Shader Language&quot;, be cause it's technically the official
+language for OpenGL, not Vulkan. Still, everyone already knew GLSL when Vulkan
+came out, and it's actually quite good at what it does, so they kept the textual
+format and just specified how to compile it to a new binary format.</p>
+<p>The <code>shaderc-rs</code> crate that we're using compiles the textual GLSL into the
+binary SPIRV for us. More precisely, the <code>shaderc-rs</code> crate's <code>build.rs</code> file
+downloads the source of the <code>shaderc</code> C++ program and builds that, then puts
+those binaries deep in your <code>target/</code> directory, then when you call the crate it
+invokes that program to do the actual compilation. And it fails if the binaries
+aren't there. The crate itself doesn't know how to do any compilation at all.</p>
+<p>If you think that sounds crazy, you're right. People are working on better
+solutions, <a href="https://www.youtube.com/watch?v=yoy4_h7Pb3M">top men</a>, I assure you,
+but until then this is the best system we've got.</p>
+<p>Now there's a whole lot that can be said about GLSL. You can seriously write
+<a href="https://thebookofshaders.com/">books</a> and <a href="http://www.iquilezles.org/">blogs</a>
+and <a href="https://www.shadertoy.com/">demo site</a> after <a href="https://www.vertexshaderart.com/">demo
+site</a> after <a href="http://glslsandbox.com/">demo
+site</a> after <a href="https://www.interactiveshaderformat.com/">demo
+site</a> for just GLSL.</p>
+<p>We'll cover some <em>introduction</em> level GLSL in this lesson, and it's fairly
+straight forward so I don't think we'll need to specifically focus on it too
+much later on. It's a &quot;based on C&quot; language with minimal extensibility, so you
+can learn all the limits of the language itself fairly fast.</p>
+<p>However, even once you quickly pick up all the rules of the language, you should
+still read the books and blogs and sites and things like that because they teach
+you how to actually apply those simple rules. Like the difference between
+learning how to play chess and learning to be good at playing chess.</p>
+<a class="header" href="#version" id="version"><h2>Version</h2></a>
+<p>The first line of all your shaders will generally be</p>
+<pre><code class="language-glsl">#version 450
+</code></pre>
+<p>There's technically a whole lot of GLSL versions, because each release of OpenGL
+has a GLSL that goes with it, but since we're not <em>really</em> using OpenGL, we just
+pretend we're using version 450 since that's what <code>shaderc</code> understands.</p>
+<a class="header" href="#inputs-and-outputs" id="inputs-and-outputs"><h2>Inputs and Outputs</h2></a>
+<p>Next you generally want to specify your inputs and outputs.</p>
+<p>In normal GLSL you don't have to specify a layout value for each input and
+output, but for the GLSL that we want to compile to SPIRV you are <em>required</em> to
+give a layout location for each. The general format is</p>
+<pre><code class="language-glsl">layout (location = INDEX) DIRECTION TYPE NAME;
+</code></pre>
+<ul>
+<li>The <code>INDEX</code> values are just integer values. They're basically arbitrary, but
+your Rust code and GLSL code must <strong>all</strong> agree on whatever you pick.
+<ul>
+<li>With a Vertex shader, the <code>AttributeDesc</code> determines the locations for
+passing CPU side data into into GLSL data at the start of the process.</li>
+<li>With a Fragment shader, the <code>SubpassDesc</code> determines the locations for
+fragment outputs becoming framebuffer data at the end of the process.</li>
+<li><em>Between</em> shaders the locations and variable outputs from one stage need to
+match the locations and names of the next stage any time you want to pass
+data between rendering stages.</li>
+<li>There's a (rather small) limit on how many location slots you're allowed,
+and if you use a struct type it can consume more than one slot. <a href="https://www.khronos.org/opengl/wiki/Layout_Qualifier_(GLSL)#Program_separation_linkage">The
+Khronos
+wiki</a>
+has some more about the rules here if you want to know the exact details. I
+don't expect any of our early lessons to hit these limits.</li>
+</ul>
+</li>
+<li>The <code>DIRECTION</code> is a keyword: one of <code>in</code>, <code>out</code>, or <code>uniform</code>. Technically
+there are other things you could put here but they're aliases for one of those
+three so let's stick to the basics. An <code>in</code> value comes from a previous stage
+(or the vertex buffer data, for the Vertex Shader), and an <code>out</code> value goes to
+the next stage (or the framebuffer, for the Fragment Shader). A <code>uniform</code> is a
+special kind of read-only value that we'll get to a little farther down the page.</li>
+<li>The <code>TYPE</code> is a variable type, using C style names, so it's stuff like
+<code>float</code>, <code>int</code>, and <code>uint</code>, not <code>f32</code>, <code>i32</code>, and <code>u32</code>. There's also <code>vecN</code>
+where N is 2, 3, or 4 if you want a float vector, and you can have integer
+vectors and such as well. You can even declare structs using the C style where
+the block of fields is written <code>{ type1 field1; type2 field2; ... }</code>.</li>
+<li>The <code>NAME</code> is just a name for the variable. Usually variable names are
+camelCase with GLSL code that you find in the wild, but snake_case is fine too.</li>
+</ul>
+<p>In GLSL you'd normally have access to a few magical values that you can read and
+write from, but not all of that translates cleanly with the <code>shaderc</code> compiler.
+In our case, the thing that we need to be the most aware of is that instead of
+writing to a magical and undeclared <code>gl_Position</code> value during the vertex shader
+to determine a vertex's on-screen position, we need to declare and use a special
+output like this:</p>
+<pre><code class="language-glsl">layout (location = 0) out gl_PerVertex {
+  vec4 gl_Position;
+};
+</code></pre>
+<a class="header" href="#functions" id="functions"><h2>Functions</h2></a>
+<p>Your GLSL can have any number of functions that you like, declared in the C
+style where the output is on the left, then the function names and arguments.</p>
+<p>At minimum each shader needs an &quot;entry point&quot;, as you may recall from the
+pipeline declaration we did. By tradition it's just called <code>main</code>, and that's
+probably good enough so we'll go with that in our shaders.</p>
+<a class="header" href="#final-note" id="final-note"><h2>Final Note</h2></a>
+<p>Just saying, in a normal project you'd probably want to have your shader code in
+separate files, not directly as string constants. If you use a file extension
+like .glsl, or maybe .vert and .frag, then your editor will probably have a mode
+for syntax highlighting and other support for the GLSL format. That's a lot
+better than a string literal. Somewhere in your Rust code you use the
+<a href="https://doc.rust-lang.org/std/macro.include_str.html">include_str!</a> macro, like
+this:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+static VERT_SRC: &amp;'static str = include_str!(&quot;dwarf.vert&quot;);
+static FRAG_SRC: &amp;'static str = include_str!(&quot;dwarf.frag&quot;);
+#}</code></pre></pre>
+<p>And then that's how you'll have your shader source available.</p>
+<p>Please understand that I'm using embedded string literals just because it's
+easiest <em>for example purposes</em> to have each example be a single file at a time.</p>
+<a class="header" href="#adding-a-vertex-attribute-for-color" id="adding-a-vertex-attribute-for-color"><h1>Adding A Vertex Attribute For Color</h1></a>
+<p>So let's add a second attribute to our vertex data. We'll add an attribute for
+color. Make a fancy rainbow triangle.</p>
+<a class="header" href="#update-shader-code" id="update-shader-code"><h2>Update Shader Code</h2></a>
+<p>First we update our shaders to use the new color attribute. A full color output
+is of course RGBA (vec4), but as input we'll just give RGB and then let the
+fragment shader add that A=1.0 in its output.</p>
+<p>So our <em>input</em> locations are 0 (position) and 1 (color), and our <em>output</em>
+locations are also 0 (the magical gl_Position) and 1 (frag_color for the
+fragment shader). The fact that the position information is location 0 for both
+inputs and outputs isn't special, you could swap it around if you wanted. Like
+with the previous lesson, our fragment shader just promotes the 2D input into a
+flat 3D output (which is actually a <code>vec4</code>, and I'll get to why that is in
+the lesson on coordinate spaces).</p>
+<p>The other line of <code>main</code>, saying <code>frag_color = color;</code> might look a little
+silly, but there's a lot of magic wrapped up in that shorthand. It's <em>not</em> a
+direct copy of the data, it's what makes that interpolation happen when more
+than one fragment is generated by a vertex. If we wanted to have a direct copy
+without interpolation we could specify the <code>flat</code> keyword on the output here
+(eg: <code>layout (location = 1) flat out vec3 frag_color;</code>). In that case, each
+fragment will use the vertex shader outputs of a particular vertex element (the
+spec calls it the &quot;<a href="https://www.khronos.org/opengl/wiki/Primitive#Provoking_vertex">provoking
+index</a>&quot;). Since
+integer values can't be interpolated, you actually <em>must</em> specify <code>flat</code> with
+integers that pass between shader stages.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub const VERTEX_SOURCE: &amp;str = &quot;#version 450
+layout (location = 0) in vec2 position;
+layout (location = 1) in vec3 color;
+
+layout (location = 0) out gl_PerVertex {
+  vec4 gl_Position;
+};
+layout (location = 1) out vec3 frag_color;
+
+void main()
+{
+  gl_Position = vec4(position, 0.0, 1.0);
+  frag_color = color;
+}&quot;;
+#}</code></pre></pre>
+<p>For our fragment shader, we accept a single input, with the <em>exact same
+location</em> as the output from the vertex shader. That's how the system knows to
+make them match. (In some older GLSL versions you also could match up variables
+by name, but SPIRV only goes by location.) This means that we actually don't
+have a location 0 input for our fragment shader, and that's totally fine. Our
+output is at location 0 (matching out <code>SubpassDesc</code>) vec4 (which is &quot;RGBA&quot;,
+since it'll be treated as a color). We'll sensibly call it <code>color</code>. We just
+promote the RGB color into an RGBA color by giving it an alpha of 1.0 (&quot;fully
+opaque&quot;).</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub const FRAGMENT_SOURCE: &amp;str = &quot;#version 450
+layout (location = 1) in vec3 frag_color;
+
+layout (location = 0) out vec4 color;
+
+void main()
+{
+  color = vec4(frag_color,1.0);
+}&quot;;
+#}</code></pre></pre>
+<a class="header" href="#make-triangle-produce-the-new-data-format" id="make-triangle-produce-the-new-data-format"><h2>Make <code>Triangle</code> Produce The New Data Format</h2></a>
+<p>Next we'll add a method to our <code>Triangle</code> type so that it can give us the
+positions interleaved with some color data. We'll just have one corner be red,
+one be green, and one blue.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+  pub fn vertex_attributes(self) -&gt; [f32; 3 * (2 + 3)] {
+    let [[a, b], [c, d], [e, f]] = self.points;
+    [
+      a, b, 1.0, 0.0, 0.0, // red
+      c, d, 0.0, 1.0, 0.0, // green
+      e, f, 0.0, 0.0, 1.0, // blue
+    ]
+  }
+#}</code></pre></pre>
+<a class="header" href="#create-a-pipeline-with-more-attributes" id="create-a-pipeline-with-more-attributes"><h2>Create A Pipeline With More Attributes</h2></a>
+<p>Now we want to support the color attribute in our <code>create_pipeline</code> function.
+That's pretty easy, we just change how the the <code>vertex_buffer</code> and <code>attributes</code>
+values are defined.</p>
+<ul>
+<li><code>vertex_buffers</code> needs to have a bigger <code>stride</code> than before, because the
+stride between elements is now &quot;five floats&quot; instead of the previous &quot;two
+floats&quot;. We'll also cast the <code>usize</code> to the <code>ElemStride</code> type alias instead of
+<code>u32</code>. It's the same type, but it lets future readers know that we probably
+knew what we were doing (but only probably).</li>
+<li><code>attributes</code> needs an entire second <code>AttributeDesc</code> entry to describe the
+color data. The location is easy enough to understand, as is the binding. The
+element format is now <code>Rgb32Float</code>, since this is three floats, and the offset
+is the sum of the previous attributes up to this point.</li>
+</ul>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      let vertex_buffers: Vec&lt;VertexBufferDesc&gt; = vec![VertexBufferDesc {
+        binding: 0,
+        stride: (size_of::&lt;f32&gt;() * 5) as ElemStride,
+        rate: 0,
+      }];
+      let position_attribute = AttributeDesc {
+        location: 0,
+        binding: 0,
+        element: Element {
+          format: Format::Rg32Float,
+          offset: 0,
+        },
+      };
+      let color_attribute = AttributeDesc {
+        location: 1,
+        binding: 0,
+        element: Element {
+          format: Format::Rgb32Float,
+          offset: (size_of::&lt;f32&gt;() * 2) as ElemOffset,
+        },
+      };
+      let attributes: Vec&lt;AttributeDesc&gt; = vec![position_attribute, color_attribute];
+#}</code></pre></pre>
+<p>This setup, with <code>[(position, color), (position, color), ..]</code> is called
+&quot;interleaved&quot; data. You can also have non-interleaved data by laying out all the
+positions and then all the colors, and so on. Then you adjust your <code>stride</code> and
+<code>offset</code> value to match that. We'll use interleaved data just because I
+personally think it's easier to think about, and even the <a href="https://www.khronos.org/opengl/wiki/Vertex_Specification_Best_Practices#Formatting_VBO_Data">Khronos
+wiki</a>
+doesn't take a clear stance either way.</p>
+<a class="header" href="#colors" id="colors"><h2>Colors!</h2></a>
+<p>That's pretty much it. Didn't I promise that <em>eventually</em> it'd get easier to
+enhance the program? That was pretty easy.</p>
+<p>So easy... that we'll keep going and add a little bit more to the lesson.</p>
+<a class="header" href="#push-constants" id="push-constants"><h1>Push Constants</h1></a>
+<p>Last lesson I said that most of the time you don't re-upload vertex data every
+frame. That's because usually you'd have a single model (an &quot;iconic triangle&quot; if
+you will) and then you'd tell the shader what animation frame, or position, or
+global light level, or other detail to use during the drawing without touching
+the model data directly. It doesn't seem like a big difference right now when
+there's only 3 vertex entries in one triangle, but if there's <em>thousands</em> of
+vertex entries, and there's <em>tens</em> of copies of that model that have to show up
+in the scene, well you'd rather be doing all that math on your GPU (with dozens
+of ALUs) than on your CPU (with only a handful of ALUs). That's like, the whole
+<em>point</em> of the GPU after all.</p>
+<p>So how do we know about these special global values during a draw call? They get
+placed into things called <em>uniforms</em>, that's what the <code>uniform</code> keyword is for
+in GLSL. When GLSL was used for OpenGL there were just &quot;uniforms&quot;, but with the
+introduction of Vulkan now we've got both &quot;Uniform Buffers&quot; (like the old
+uniforms) and also &quot;Push Constants&quot; (a fancy new thing). Uniforms get set before
+a draw call and then they're a fixed, read-only value for that entire draw call.
+No changes per-vertex or per-fragment or anything else. Any shader can access
+that uniform, if it's been correctly configured in your pipeline setup.</p>
+<p>As I said, push constants are newer, so older 3D books might not mention them if
+you pick one up for some light technical reading, but they work the same way as
+a uniform buffer. The biggest difference is that push constants can be assumed
+to be significantly faster to update (because of where their physical memory is
+on the GPU's card), and also they are somewhat easier to use (because there's no
+faffing about with buffers), but you only get a <em>very</em> limited amount of push
+constant space. With <code>gfx-hal</code> you can only use 128 <strong>bytes</strong> of push constant
+space. The Vulkan spec assures that you have at least that much, and many
+cards offer more these days, but currently <code>gfx-hal</code> has no way to ask the
+graphics card exactly how much it supports. It's on the TODO list for 0.2.</p>
+<p>As a demo of how to use push constants, we'll record a <code>std::time::Instant</code> at
+the creation of our <code>HalState</code> and then use the time since that Instant to shift
+our triangle towards black.</p>
+<a class="header" href="#add-it-to-our-halstate" id="add-it-to-our-halstate"><h2>Add It To Our <code>HalState</code></h2></a>
+<p>We first add an
+<a href="https://doc.rust-lang.org/std/time/struct.Instant.html">Instant</a> field to our
+<code>HalState</code> and then use <code>Instant::now</code> to get an Instant while we're
+initializing our HalState value.</p>
+<p>Before we record the command buffer, we'll decide the current time value as an
+<code>f32</code>. Please note that <code>f32</code> is actually a <a href="https://randomascii.wordpress.com/2012/02/13/dont-store-that-in-a-float/">very
+bad</a>
+way to store time in the long term (that's why <code>Duration</code> has two integer values
+instead of a single float value), but it's fine for our short term animation
+purposes here.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+    // DETERMINE THE TIME DATA
+    let duration = Instant::now().duration_since(self.creation_instant);
+    let time_f32 = duration.as_secs() as f32 + duration.subsec_nanos() as f32 * 1e-9;
+#}</code></pre></pre>
+<p>And just after we bind the vertex buffer, we also push the graphics constant:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+        encoder.bind_vertex_buffers(0, buffers);
+        encoder.push_graphics_constants(
+          &amp;self.pipeline_layout,
+          ShaderStageFlags::FRAGMENT,
+          0,
+          &amp;[time_f32.to_bits()],
+        );
+#}</code></pre></pre>
+<p>The important part is that we have to remember to adjust our pipeline definition
+as well. Remember how the <code>push_constants</code> value was an empty Vec? We need one
+entry now (one push constant).</p>
+<p>The format of the Vec is pretty easy: You give <code>(ShaderStageFlags, Range)</code>
+tuples, with the ShaderStageFlags signifying what stage the push const will
+appear in, and the Range specifying what range of that <code>push_graphics_constants</code>
+slice we made will be accessed during that stage. Our stage is
+<code>ShaderStageFlags::FRAGMENT</code>, and our range is to just use index 0 (which is
+<code>0..1</code> in Rust's Range notation, don't forget).</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+      let push_constants = vec![(ShaderStageFlags::FRAGMENT, 0..1)];
+      let layout = unsafe {
+        device
+          .create_pipeline_layout(&amp;descriptor_set_layouts, push_constants)
+          .map_err(|_| &quot;Couldn't create a pipeline layout&quot;)?
+      };
+#}</code></pre></pre>
+<a class="header" href="#add-it-to-the-shader-code" id="add-it-to-the-shader-code"><h2>Add It To The Shader Code</h2></a>
+<p>Adding the push constants to a shader is pretty easy, but there are few rules.
+All of your push constants appear in a single block with the special layout
+value of <code>push_constant</code>. This block isn't <code>in</code> or <code>out</code>, instead it's
+<code>uniform</code>. After that you give a name for the block type, the block itself, and then
+the name that we're going to access it under. If you haven't programmed in C
+before this, it may seem weird, but they think it's normal. We just have to go
+with it.</p>
+<p>Since we want a single <code>f32</code> to be the time, we define it as a block that holds
+a single <code>float</code> value (the GLSL equivalent) which we call <code>time</code>. Then we
+take <code>push.time</code> (think of it like they're all stored within a global <code>push</code>
+struct), do some funny math on that so that it ends up as a 0.0 to 1.0 value
+(since color channels are supposed to be in that range), and make a vec4. We can
+multiply the vec4 from our time with the vec4 for our <code>frag_color</code>, and it does
+a component-wise multiplication (a.x * b.x, a.y * b.y, etc). Then we shove the
+result out the door. Bam, now our triangle shifts between black and rainbow.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub const FRAGMENT_SOURCE: &amp;str = &quot;#version 450
+layout (push_constant) uniform PushConsts {
+  float time;
+} push;
+
+layout (location = 1) in vec3 frag_color;
+
+layout (location = 0) out vec4 color;
+
+void main()
+{
+  float time01 = -0.9 * abs(sin(push.time * 0.9)) + 0.9;
+  color = vec4(frag_color,1.0) * vec4(time01,time01,time01,1.0);
+}&quot;;
+#}</code></pre></pre>
+<a class="header" href="#uniform-buffers" id="uniform-buffers"><h1>Uniform Buffers</h1></a>
+<p>Like I said, there's a harsh limit on your push constant space. If you want more
+global data than you can fit into your push constants you need to setup a
+Uniform Buffer.</p>
+<p>However, I also promised to keep this lesson short, and we'll be using uniform
+buffers soon enough I'm sure, so we <em>won't</em> go into them right now. Knowing
+about push constants already teaches you about the general idea of uniform data,
+so we've covered enough to stop here.</p>
+<p><img src="images/shaders-complete.png" alt="shaders-complete" /></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="04_triangle_intro.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="06_textures.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="04_triangle_intro.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="06_textures.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>

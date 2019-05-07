@@ -1,0 +1,514 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Instanced Drawing - learn-gfx-hal</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="01_introduction.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li><a href="02_opening_a_window.html"><strong aria-hidden="true">2.</strong> Opening A Window</a></li><li><a href="03_clear_the_window.html"><strong aria-hidden="true">3.</strong> Clear The Window</a></li><li><a href="04_triangle_intro.html"><strong aria-hidden="true">4.</strong> Triangle Intro</a></li><li><a href="05_shaders.html"><strong aria-hidden="true">5.</strong> Shaders</a></li><li><a href="06_textures.html"><strong aria-hidden="true">6.</strong> Textures</a></li><li><ol class="section"><li><a href="06_01_generalizing_hal_state.html"><strong aria-hidden="true">6.1.</strong> Generalizing HalState</a></li></ol></li><li><a href="07_coordinates.html"><strong aria-hidden="true">7.</strong> Coordinates</a></li><li><a href="08_camera.html"><strong aria-hidden="true">8.</strong> Camera</a></li><li><a href="09_depth_buffer.html"><strong aria-hidden="true">9.</strong> Depth Buffer</a></li><li><a href="10_instanced_drawing.html" class="active"><strong aria-hidden="true">10.</strong> Instanced Drawing</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">learn-gfx-hal</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="#a-new-author" id="a-new-author"><h1>A new author!</h1></a>
+<p>Introducing a new, star, guest author, @termhn! She's been
+helping our main man Lokathor with the previous lessons, but this
+time is hopping in to write the lesson for real. Woo!</p>
+<a class="header" href="#instanced-drawing" id="instanced-drawing"><h1>Instanced Drawing</h1></a>
+<p>So, now that we have a few cubes on the screen, what could be a more
+logical step than drawing <strong>many, many more cubes on the screen</strong>?!
+Well, the naive way to do this would be to just issue many more draw
+calls, and indeed, since we are using push constants to change the
+transformations, this would work. However, once you get to a few
+thousand objects, this would start to slow down quite a bit, even for
+something as simple as a textured cube, especially on less powerful
+desktop and mobile GPUs. This is <em>less</em> of a problem when using one of
+Vulkan/DX12/Metal than it was in the past with OpenGL, but it can still
+bog down from many draw calls.</p>
+<p>The solution to this problem is something called <em>instanced drawing</em>.
+Whenever we've made a draw call, we've passed <em>two</em> ranges, one for
+vertices and one for <em>instances</em>. Until this point, we've sort of
+glossed over what this &quot;instances&quot; argument means, but that changes
+now!</p>
+<p>As you know, the Vertex Shader is run for every one of the vertexes in
+the bound vertex buffer(s). The data from the vertex buffer gets sent in
+to &quot;attributes&quot; in the shader and this data changes for each vertex
+based on the stride that we told it when creating our pipeline. What
+we also gave it was a &quot;rate,&quot; but we also sort of glossed over this in
+the past. We have been inputting a &quot;rate&quot; of 0, which means that the
+data in this vertex buffer should advance <em>for every vertex</em>. However,
+if we input a rate of 1, then we are telling it that the data in this
+buffer should advance only every <em>instance</em>.</p>
+<p>For example, if we do a draw call over 50 vertices and 5 instances,
+it will repeat all 50 vertices 5 times. Each &quot;rate 0&quot; vertex buffer
+advances once per vertex and resets to the start for the next instance.
+Each &quot;rate 1&quot; vertex buffer will stay the same across a whole instance
+and then advance once in between instances.</p>
+<p>Basically, we can get data which stays the same between each
+<em>instance</em> of an object. This can often be super useful, as we'll
+explore in this tutorial!</p>
+<p>It's also possible to use a <code>rate</code> of more than 1. In this case,
+the rate determines the <em>number of instanes</em> which will be skipped
+before the data is advanced. For example, for a rate of 2, the
+data will be advanced <em>every other</em> instance instead of every
+instance. This feature is supported by default on DX12 and Metal,
+but it is gated behind an extension in Vulkan and the <code>gfx-hal</code>
+Vulkan backend does not currently support it. However, work
+<a href="https://github.com/gfx-rs/gfx/pull/2611">is being done</a> to
+rememdy this.</p>
+<a class="header" href="#a-maximum-number-of-instances" id="a-maximum-number-of-instances"><h2>A maximum number of instances</h2></a>
+<p>As we'll soon discover, using this method <em>does</em> come with some
+limitations. One of them is that we'll need to know ahead of time
+the maximum number of instances we want to be able to draw, and we'll
+need to allocate a buffer big enough to fit all the data for those
+maximum number of instances. Luckily, our per-instance data is
+relatively small, so it's not too big a deal.</p>
+<p>For now, we'll just choose an arbitrary but fairly large number like</p>
+<ol start="5000">
+<li>Just above where we have our vertex shader source, we'll put</li>
+</ol>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub const MAX_CUBES: usize = 5000;
+#}</code></pre></pre>
+<a class="header" href="#modifying-the-shader" id="modifying-the-shader"><h2>Modifying the shader</h2></a>
+<p>Okay, so the next thing we'll do is modify our vertex shader a little
+bit. The first thing we'll do is change our push constant block
+slightly. Instead of passing in a fully precomputed
+model-view-projection matrix all in one, we're now going to precompute
+the view-projection matrix in our push constants and then pass in
+<em>a new model matrix per instance</em> and combine the two in the vertex
+shader.</p>
+<pre><code class="language-glsl">layout (push_constant) uniform PushConsts {
+  mat4 view_proj;
+} push;
+</code></pre>
+<p>Next, we're going to add <em>four</em> new vertex attributes. We need four
+because each attribute location can only store up to a maximum of a
+<code>vec4</code> of data, and we want to pass in a <code>mat4</code> instead. Actually, in
+theory, the Vulkan spec supports just defining one attribute at the
+first of the four locations with type <code>mat4</code> and it will automatically
+fetch the data from the next four attribute locations, but this isn't
+yet translated properly to dx12, so we'll hold off on that for now.
+So, just below our <code>position</code> and <code>vert_uv</code> input attributes, we'll add</p>
+<pre><code class="language-glsl">layout (location = 2) in vec4 model_col1;
+layout (location = 3) in vec4 model_col2;
+layout (location = 4) in vec4 model_col3;
+layout (location = 5) in vec4 model_col4;
+</code></pre>
+<p>And finally update the actual calculation to use this new setup like
+so</p>
+<pre><code class="language-glsl">void main()
+{
+  mat4 model = mat4(
+    model_col1,
+    model_col2,
+    model_col3,
+    model_col4);
+  gl_Position = push.view_proj * model * vec4(position, 1.0);
+  frag_uv = vert_uv;
+}
+</code></pre>
+<p>Okay, that's all we need to do in the shaders!</p>
+<a class="header" href="#adding-instance-buffers-to-halstate" id="adding-instance-buffers-to-halstate"><h2>Adding instance buffers to HalState</h2></a>
+<p>The next thing we need to do is add a new piece of <code>HalState</code> which
+we'll call <code>cube_instances</code></p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+pub struct HalState {
+    //...
+    cube_instances: Vec&lt;BufferBundle&lt;back::Backend, back::Device&gt;&gt;,
+    //...
+}
+#}</code></pre></pre>
+<p>The reason we want a <code>Vec</code> of <code>BufferBundle</code>s is because we are
+actually going to use not just <em>one</em> instance buffer, but one instance
+buffer <em>per frame</em> in flight. The reason we do this is so that we can
+guarantee that we are not attempting to write new data into the buffer
+to update the transformations of the cubes while another frame is
+trying to read from that data on the GPU.</p>
+<p>Next we'll actually create those buffers in <code>HalState</code>'s <code>new</code>, just
+below where we create and upload to the index buffer:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+    let mut cube_instances = Vec::new();
+    for _ in 0..frames_in_flight {
+      cube_instances.push(BufferBundle::new(
+        &amp;adapter,
+        &amp;device,
+        size_of::&lt;f32&gt;() * 16 * MAX_CUBES,
+        BufferUsage::VERTEX,
+      )?);
+    }
+#}</code></pre></pre>
+<p>Note that the size is 16 <code>f32</code>s (the size of a 4x4 matrix) times the
+max number of cubes we defined earlier, and that the usage is
+VERTEX. Also note that our <code>BufferBundle</code> already <em>by default</em> and
+<em>only</em> (for now) supports creating a <code>CPU_VISIBLE</code> buffer. This is
+usually what you want for an instance buffer, as you'll be wanting to
+write data to it frequently. However, we'll also want to transition to
+using to <code>DEVICE_LOCAL</code> memory for most of our normal vertex buffers,
+which will likely <em>not</em> be changed and therefore are much better off
+living in the high speed, on-device memory.</p>
+<p>Oh, and don't forget to clean them up either! Right after we clean
+up the other cube vertex and index buffers,</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+for buf in self.cube_instances.drain(..) {
+    buf.manually_drop(self.device.deref());
+}
+#}</code></pre></pre>
+<a class="header" href="#adding-new-vertex-buffer-and-attributes-to-pipeline" id="adding-new-vertex-buffer-and-attributes-to-pipeline"><h2>Adding new vertex buffer and attributes to pipeline</h2></a>
+<p>The next thing we'll do is modify our pipeline to add another vertex
+buffer and our four new vertex attributes.</p>
+<p>In the <code>create_pipeline</code> function, we'll modify the creation of the
+<code>vertex_buffers</code> to add a second one</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+let vertex_buffers: Vec&lt;VertexBufferDesc&gt; = vec![
+    VertexBufferDesc {
+        binding: 0,
+        stride: size_of::&lt;Vertex&gt;() as ElemStride,
+        rate: 0,
+    },
+    // Add another vertex buffer with stride of a 4x4 matrix and rate 1
+    // meaning it advances once per instance rather than per vertex
+    VertexBufferDesc {
+        binding: 1,
+        stride: (size_of::&lt;f32&gt;() * 16) as ElemStride,
+        rate: 1,
+    }
+];
+#}</code></pre></pre>
+<p>And add four new attributes to <code>attributes</code></p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+let mut attributes: Vec&lt;AttributeDesc&gt; = Vertex::attributes();
+
+// We need 4 new attributes, one for each column of the matrix we want to put in.
+for i in 0..4 {
+    attributes.push(AttributeDesc {
+        location: 2 + i,
+        binding: 1,
+        element: Element {
+            format: Format::Rgba32Float,
+            offset: i * 16,
+        },
+    });
+}
+#}</code></pre></pre>
+<p>Note the <code>binding</code> which matches the <code>VertexBufferDesc</code> above it,
+as well as the <code>location</code>s which match with what we added to
+our shaders. Also be careful to use the correct <code>format</code> and
+<code>offset</code>s into each <code>stride</code> in the buffer.</p>
+<a class="header" href="#uploading-data-and-drawing-it" id="uploading-data-and-drawing-it"><h2>Uploading data and drawing it</h2></a>
+<p>Now we'll drop all the way down to <code>draw_cubes_frame</code>. The first thing
+we'll do is get a mutable reference to the corresponding instance
+buffer just after we wait on the acquire'd image's previous
+submission fence.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+let cube_instance_buf = &amp;mut self.cube_instances[i_usize];
+#}</code></pre></pre>
+<p>Next we'll write the instance data into the instance buffer for each
+cube which we are passed in, up to the max number of cubes. This
+process is pretty similar to other writing we've done to CPU visible
+buffers in the past.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+// Since we just waited for the previous submission's fence we know we can write data to the buffer
+// We write each model matrix given (up to a max of MAX_CUBES because that's what we allocated space for)
+unsafe {
+    let mut data_target = self.device
+        .acquire_mapping_writer(&amp;cube_instance_buf.memory, 0..cube_instance_buf.requirements.size)
+        .map_err(|_| &quot;Failed to acquire an instance buffer mapping writer!&quot;)?;
+    let stride = 16; // 16 floats = one 4x4 matrix
+    for i in 0..models.len().min(MAX_CUBES) {
+        data_target[i*stride..(i+1)*stride].copy_from_slice(&amp;models[i].data);
+    }
+    self.device
+        .release_mapping_writer(data_target)
+        .map_err(|_| &quot;Couldn't release an instance buffer mapping writer!&quot;)?;
+}
+#}</code></pre></pre>
+<p>Next, we'll modify our command recording. First, we'll take out the
+loop that previously existed so we only have one each of the
+<code>push_graphics_constants</code> and <code>draw_indexed</code> commands. We'll also
+change our <code>push_graphics_constants</code> to only pass in the
+<code>view_projection</code> matrix, and delete the old math that calculated
+the full MVP matrix.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+encoder.push_graphics_constants(
+    &amp;self.pipeline_layout,
+    ShaderStageFlags::VERTEX,
+    0,
+    cast_slice::&lt;f32, u32&gt;(&amp;view_projection.data)
+        .expect(&quot;this cast never fails for same-aligned same-size data&quot;),
+);
+#}</code></pre></pre>
+<p>And finally, change our draw call to draw the correct number of
+vertices <em>and</em> instances.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+encoder.draw_indexed(0..36, 0, 0..models.len().min(MAX_CUBES) as u32);
+#}</code></pre></pre>
+<a class="header" href="#done--almost" id="done--almost"><h2>Done! ... Almost</h2></a>
+<p>Okay! Now if you start it, you should see... the same thing as the
+last lesson! Okay, well... nice, but we wanted <em>more cubes</em>! Alright,
+well, to do that we'll bring in the <code>rand</code> crate and spice up our
+cube generation just a little bit.</p>
+<a class="header" href="#getting-random" id="getting-random"><h2>Getting Random</h2></a>
+<p>First in our <code>Cargo.toml</code></p>
+<pre><code class="language-toml">rand = &quot;0.6&quot;
+</code></pre>
+<p>Then, near the top of our rust file,</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+use rand::prelude::*;
+#}</code></pre></pre>
+<p>Next, we'll change the &quot;physics&quot; rotation code a bit, as it gets...
+<em>really</em> fast when you increase the number of cubes being shown.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+let r = ONE_SIXTIETH * 30.0 * (i as f32 + 1.0) / MAX_CUBES as f32;
+#}</code></pre></pre>
+<p>Next, we'll change our cube generation code a bit. Instead of
+manually defining 6 cubes, we'll generate cubes up to our defined
+<code>MAX_CUBES</code> and distribute them randomly into an area proportionate
+to the number of them.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+let mut cubes = Vec::with_capacity(MAX_CUBES);
+let mut rng = rand::thread_rng();
+for _ in 0..MAX_CUBES {
+    let scaling = (MAX_CUBES as f32).cbrt() * 3.0;
+    let rand_vec = glm::vec3(rng.gen::&lt;f32&gt;(), rng.gen::&lt;f32&gt;(), rng.gen::&lt;f32&gt;());
+    cubes.push(glm::translation(&amp;(scaling * rand_vec)));
+}
+LocalState {
+    //...
+    cubes,
+    //...
+}
+#}</code></pre></pre>
+<p>You'll notice that the area we're distributing the cubes into is a
+cube with each side as <code>cbrt(MAX_CUBES) * 3.0</code>. This means that, on
+average, since each cube is one unit in size, there will be one cube
+distributed every 3 units. Feel free to play around with the scalar
+multiplication if you want a tighter or more spread distribution.</p>
+<a class="header" href="#change-the-projection-matrix" id="change-the-projection-matrix"><h2>Change the projection matrix</h2></a>
+<p>Finally, we'll need to change the perspective matrix a bit to make the
+'far' plane further away, or else we'll lose some cubes off the far
+clipping plane!</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+let mut temp = glm::perspective_lh_zo(800.0 / 600.0, f32::to_radians(50.0), 0.1, 1000.0);
+#}</code></pre></pre>
+<p>Now you should get something like this</p>
+<p><img src="images/5kcubes.jpg" alt="5000 cubes" /></p>
+<p>Which, okay, that's cool, but how high can we go?! I've had success
+with 200,000 cubes on my own machine, but you might be able to go
+higher!</p>
+<p><img src="images/200kcubes.jpg" alt="200k cubes" /></p>
+<p>Yeah, that's a lot of cubes...</p>
+<p>As always, this example's code can be viewed in the
+<a href="https://github.com/Lokathor/learn-gfx-hal/tree/master/examples">examples</a>
+directory.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="09_depth_buffer.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="09_depth_buffer.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>
